@@ -1,0 +1,14 @@
+- Web App	
+	- Backend
+		- Node.js
+		- Engine.IO (Socket.IO)
+	- Frontend
+		- React
+		- Tailwind CSS
+		- Socket.IO (Client)
+		- Chart.js
+		- Three.js
+
+- Glove
+	- C++
+	- socket.io-client
