@@ -3,6 +3,7 @@ import { startStream, stopStream } from '../Misc/api';
 import BarChart from '../Graphs/BarChart';
 import LineChart from '../Graphs/LineChart';
 import Config from '../Misc/config'
+import Tile from '../Misc/Tile'
 
 // Chart.defaults.global.defaultFontFamily = "Roboto, sans-serif";
 // https://github.com/chartjs/Chart.js/issues/2437#issuecomment-216530491
@@ -37,20 +38,20 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <div className="chart-wrapper">
+      <div className="">
+        <Tile>
           <LineChart
             sensorData={this.state.sensorData}
             colors={this.colours}
             sim={this.state.simulate}
           />
-        </div>
-        <div className="chart-wrapper">
+        </Tile>
+        <Tile>
           <BarChart
             sensorData={this.state.sensorData}
             colors={this.colours}
           />
-        </div>
+        </Tile>
         {/* <label>Raw:</label>
         <input 
             type="checkbox"

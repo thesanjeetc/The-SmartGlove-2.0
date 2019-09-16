@@ -35,7 +35,8 @@ class BarChart extends React.Component {
               {
                 ticks: {
                   min: 0,
-                  max: 100
+                  max: 100,
+                  stepSize:10
                 },
                 gridLines: {
                   display:false
