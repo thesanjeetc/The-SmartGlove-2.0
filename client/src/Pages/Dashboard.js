@@ -22,7 +22,7 @@ class App extends React.Component {
       darkmode: true,
       connected: false,
       batteryLevel:'-',
-      elapsedTime:'00:21'
+      elapsedTime:'-'
     };
     this.handleCheck = this.handleCheck.bind(this);
   }
