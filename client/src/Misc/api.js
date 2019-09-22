@@ -9,6 +9,10 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   socket = openSocket(window.location.hostname);
 }
 
+function setup(connCheck){
+  socket.on('connState', (state, batt) => connCheck(null, state, batt));
+}
+
 function startStream(cb) {
   socket.on('newData', timestamp => cb(null, timestamp));
   socket.emit('startStream', Config.streamInterval, Config.numSensors);
@@ -18,4 +22,4 @@ function stopStream() {
   socket.emit('stopStream');
 }
 
-export { startStream, stopStream};
+export { startStream, stopStream, setup};

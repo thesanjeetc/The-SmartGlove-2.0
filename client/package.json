@@ -4,8 +4,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.24",
+    "@fortawesome/free-brands-svg-icons": "^5.11.1",
+    "@fortawesome/free-solid-svg-icons": "^5.11.1",
+    "@fortawesome/react-fontawesome": "^0.1.4",
     "chart.js": "^2.8.0",
     "react": "^16.9.0",
+    "react-circular-progressbar": "^2.0.2",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
@@ -13,7 +18,7 @@
     "socket.io-client": "^2.2.0"
   },
   "scripts": {
-    "tailwind:css":"tailwind build src/Styles/tailwind.src.css -c -o src/Styles/tailwind.css",
+    "tailwind:css": "tailwind build src/Styles/tailwind.src.css -c -o src/Styles/tailwind.css",
     "start": "npm run tailwind:css && react-scripts start",
     "build": "npm run tailwind:css && react-scripts build",
     "test": "react-scripts test",

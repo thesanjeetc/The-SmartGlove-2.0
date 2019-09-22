@@ -31,3 +31,80 @@ iframe{
   height:50%;
 }
             
+
+.bg-main{
+  background-color: #5271ff;
+}
+
+.bg-dark-tile{
+  background-color: #262D47;
+}
+
+.bg-dark-main{
+  background-color: #171C30;
+}
+
+.controlButton{
+  transition:0.1s ease;
+  padding:0%;
+}
+
+.controlButton:hover{
+  background-color: #5271ff;
+}
+
+.disconnected{
+  background: #ff4d4d;
+  box-shadow: 0 0 0 rgba(218, 81, 81, 0.603);
+  -moz-animation: disPulse 2s infinite;
+  -webkit-animation: disPulse 2s infinite;
+  animation: disPulse 2s infinite;
+}
+
+.connected{
+  background: #16cf77;
+  box-shadow: 0 0 0 rgba(22, 207, 119, 0.603);
+  -moz-animation: connPulse 2s infinite;
+  -webkit-animation: connPulse 2s infinite;
+  animation: connPulse 2s infinite;
+}
+
+.pulseAnim {
+  display: block;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+@keyframes disPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(218, 81, 81, 0.603);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(218, 81, 81, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(218, 81, 81, 0);
+  }
+}
+
+@keyframes connPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(22, 207, 119, 0.603);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(22, 207, 119, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(42, 68, 56, 0);
+  }
+}
+
+.disText{
+  color: #ff4d4d;
+}
+
+.connText{
+  color: #16cf77;
+}
+
