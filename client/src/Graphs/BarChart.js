@@ -57,8 +57,8 @@ class BarChart extends React.Component {
           datasets: [{
             label: this.props.title,
             data: this.props.sensorData,
-            backgroundColor: this.props.colors,
-            hoverBackgroundColor: this.props.colors
+            backgroundColor: Config.sensorColours,
+            hoverBackgroundColor: Config.sensorColours
           }]
         }
       });

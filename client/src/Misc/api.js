@@ -9,7 +9,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   socket = openSocket(window.location.hostname);
 }
 
-function setup(connCheck){
+function setup (connCheck){
   socket.on('connState', (state, batt) => connCheck(null, state, batt));
 }
 

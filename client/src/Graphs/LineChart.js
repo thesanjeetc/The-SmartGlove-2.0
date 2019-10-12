@@ -44,9 +44,9 @@ class LineChart extends React.Component {
             label: i,
             data: sensor,
             fill: 'none',
-            backgroundColor: this.props.colors[i],
+            backgroundColor: Config.sensorColours[i],
             pointRadius: 0,
-            borderColor: this.props.colors[i],
+            borderColor: Config.sensorColours[i],
             borderWidth: 1.3,
             lineTension: 0.2
           }
