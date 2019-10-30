@@ -10,7 +10,6 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "chart.js": "^2.8.0",
     "react": "^16.9.0",
-    "react-circular-progressbar": "^2.0.2",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",

@@ -30,18 +30,39 @@ iframe{
   border-radius: 0.5em;
   height:50%;
 }
-            
-
-.bg-main{
-  background-color: #5271ff;
-}
 
 .bg-dark-tile{
-  background-color: #262D47;
+  background-color: #1c2138;
+  color: #e2e8f0;
+  transition:0.2s;
+}
+
+.bg-dark-menu{
+  background-color:#242a42;
+  color: #e2e8f0;
+  transition:0.2s;
+}
+
+.bg-light-main{
+  background-color: #e2e8f0;
+  transition:0.2s;
+}
+
+.bg-light-tile{
+  background-color: #f7fafc;
+  color: #718096;
+  transition:0.2s;
+}
+
+.bg-light-menu{
+  background-color:#cbd5e0;
+  color: #718096;
+  transition:0.2s;
 }
 
 .bg-dark-main{
   background-color: #171C30;
+  transition:0.2s;
 }
 
 .controlButton{
@@ -49,8 +70,20 @@ iframe{
   padding:0%;
 }
 
+.menubutton{
+  transition:0.1s ease;
+  padding:0%;
+  font-size: 20px;
+}
+
 .controlButton:hover{
   background-color: #5271ff;
+  color:white;
+}
+
+.menubutton:hover{
+  background-color: #5271ff;
+  color:white;
 }
 
 .disconnected{

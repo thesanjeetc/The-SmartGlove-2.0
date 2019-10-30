@@ -1,5 +1,5 @@
 import openSocket from 'socket.io-client';
-import Config from './config'
+import Config from '../config'
 
 let socket;
 

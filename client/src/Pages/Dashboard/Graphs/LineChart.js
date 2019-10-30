@@ -1,6 +1,6 @@
 import React from 'react';
 import Chart from 'chart.js';
-import Config from '../Misc/config.js'
+import Config from '../config'
 
 class LineChart extends React.Component {
     constructor(props) {
