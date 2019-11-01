@@ -12,7 +12,7 @@ import {
   faPhoneAlt,
   faVideo
 } from "@fortawesome/free-solid-svg-icons";
-import Config from "../config";
+import GlobalState from "../Globals";
 
 const MenuButton = props => {
   return (
@@ -46,8 +46,9 @@ const MenuBar = props => {
         icon={faAdjust}
         className="self-end"
         onClick={() => {
-          Config.darkmode = !Config.darkmode;
-          localStorage.setItem('darkmode', Config.darkmode.toString());
+          GlobalState.darkmode = !GlobalState.darkmode;
+          localStorage.setItem("darkmode", GlobalState.darkmode.toString());
+          props.pageRefresh();
         }}
       />
     </BaseComponent>
