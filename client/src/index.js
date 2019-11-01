@@ -4,13 +4,13 @@ import Dashboard from "./Pages/Dashboard/Dashboard";
 import Landing from "./Pages/Landing/Landing";
 import "./Styles/index.css";
 import "./Styles/tailwind.css";
-import Config from "./Pages/Dashboard/Config";
+import GlobalState from "./Pages/Dashboard/Globals";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 
 if (localStorage.getItem("darkmode") === null) {
   localStorage.setItem("darkmode", "true");
 } else {
-  Config.darkmode = localStorage.getItem("darkmode") === "true";
+  GlobalState.darkmode = localStorage.getItem("darkmode") === "true";
 }
 
 const routing = (
