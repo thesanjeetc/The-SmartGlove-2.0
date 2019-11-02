@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "./Base";
-import { streamState } from "../Other/api";
 
 const Button = props => {
   return (

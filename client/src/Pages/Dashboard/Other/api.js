@@ -1,5 +1,5 @@
 import openSocket from "socket.io-client";
-import Config from "../Config";
+import Config from "../ConfigFile";
 
 let socket;
 let callbacks = [];

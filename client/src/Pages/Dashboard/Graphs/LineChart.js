@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from "chart.js";
 import { readStream } from "../Other/api";
-import Config from "../Config";
+import Config from "../ConfigFile";
 
 class LineChart extends React.Component {
   constructor(props) {
