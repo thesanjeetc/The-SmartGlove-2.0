@@ -15,7 +15,7 @@ app.get("*", (req, res) => {
 
 let dataStream;
 let connState;
-let streaming;
+let streaming = true;
 let batt = "-";
 let roomID = "glove";
 
@@ -36,13 +36,16 @@ const simulateData = (client, interval) => {
 
 io.on("connection", client => {
   client.emit("connState", connState, batt);
+  streaming ? client.emit("startStream") : client.emit("stopStream");
   client.on("startStream", (interval, numSensors) => {
+    streaming = true;
     client.broadcast.emit("startStream");
     simulateData(client, interval);
   });
 
   client.on("stopStream", () => {
     // Cancel Stream
+    streaming = false;
     client.broadcast.emit("stopStream");
     clearInterval(dataStream);
   });
