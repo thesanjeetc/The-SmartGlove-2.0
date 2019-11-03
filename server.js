@@ -15,7 +15,7 @@ app.get("*", (req, res) => {
 
 let dataStream;
 let connState;
-let streaming = true;
+let streaming = false;
 let batt = "-";
 let roomID = "glove";
 
