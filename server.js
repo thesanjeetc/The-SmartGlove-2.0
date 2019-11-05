@@ -40,7 +40,6 @@ io.on("connection", client => {
   client.on("startStream", (interval, numSensors) => {
     streaming = true;
     client.broadcast.emit("startStream");
-    try{clearInterval(dataStream)}catch{};
     simulateData(client, interval);
   });
 
