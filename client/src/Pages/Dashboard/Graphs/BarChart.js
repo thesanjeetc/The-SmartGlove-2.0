@@ -20,9 +20,9 @@ class BarChart extends React.Component {
   componentDidUpdate() {
     this.myChart.data.labels = this.labels;
     this.myChart.data.datasets[0].data = this.state.newData;
-    this.myChart.update();
-  }
-
+    this.myChart.update(); // OI, should we copy this code into a new file, sorry yeh haven't we set up a file for THREE
+}
+// yeah. We can use the rest (i.e newData and shouldComponentUpdate and shit) no it's not yeah but we have to write a couple of functions
   shouldComponentUpdate(nextProps, nextState) {
     return this.state.newData != nextState.newData;
   }
