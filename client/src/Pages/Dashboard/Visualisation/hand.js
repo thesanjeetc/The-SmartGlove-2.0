@@ -11,6 +11,7 @@ import {
   readStream
 } from "../Other/api";
 import Config from "../ConfigFile";
+// import FUCKINGWORK from "../fuckign_work.js"
 
 
 import {
@@ -26,6 +27,7 @@ OBJLoader(THREE);
 class HandVis extends Component {
   constructor(props) {
     super(props);
+    this.canvasRef = React.createRef();
     this.state = {
       newData: new Array(10).fill(0)
     };
@@ -33,7 +35,9 @@ class HandVis extends Component {
     // Set up global variables
     // Set up Three.js scene, camera and
     this.state.scene = new THREE.Scene(); //all in constructor
-    this.state.scene.background = new THREE.Color(0x262D47);
+    // this.state.scene.background = new THREE.Color(0x262D47);
+    this.state.scene.background = new THREE.Color(0x5271ff);
+
     this.state.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     // Set up raycaster and mouse
@@ -86,7 +90,6 @@ class HandVis extends Component {
 
         // Initialise the render
         this.continueLoading();
-        this.animate();
       }.bind(this))
 
     this.state.uniforms = {
@@ -109,20 +112,16 @@ class HandVis extends Component {
     }
 
     // GLSL Shader Material
-    this.state.pressureMat = new THREE.ShaderMaterial({
-      uniforms: this.state.uniforms,
-      vertexShader: vertexshader,
-      fragmentShader: fragshader
-    })
-    // Set up renderer and orbit camera controls
-    this.renderer = new THREE.WebGLRenderer({
-      antialias: true
+    // this.state.pressureMat = new THREE.ShaderMaterial({
+    //   uniforms: this.state.uniforms,
+    //   vertexShader: vertexshader,
+    //   fragmentShader: fragshader
+    // })
+
+    this.state.pressureMat = new THREE.MeshBasicMaterial({
+      color: "#0F0",
+      wireframe: false
     });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(this.renderer.domElement);
-    this.controls = new OrbitControls(this.state.camera, this.renderer.domElement);
-    this.state.camera.position.set(1.25, 26, 0);
-    this.controls.update();
 
     // Set up event listening functions
     window.addEventListener("dblclick", this.onDblMouseClick, false)
@@ -133,7 +132,7 @@ class HandVis extends Component {
   continueLoading() {
 
     // Set up mesh
-    this.state.mesh.scale.set(10, 10, 10);
+    this.state.mesh.scale.set(1000, 1000, 1000);
     this.state.mesh.traverse((o) => {
       console.log(o)
       if (typeof(o.material) !== "undefined") {
@@ -155,10 +154,21 @@ class HandVis extends Component {
   }
   animate = () => {
     this.controls.update();
-    this.render();
+    this.renderer.render(this.state.scene, this.state.camera);
     requestAnimationFrame(this.animate);
-  }
+}
   componentDidMount() {
+
+      // Set up renderer and orbit camera controls
+      this.renderer = new THREE.WebGLRenderer({
+        antialias: true
+      });
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+      // this.renderer.setSize(this.props.width, this.props.height);
+      document.body.appendChild(this.renderer.domElement);
+      this.controls = new OrbitControls(this.state.camera, this.renderer.domElement);
+      this.state.camera.position.set(1.25, 26, 0);
+      this.controls.update();
 
     readStream((err, datapoints) =>
       this.setState({
@@ -186,6 +196,8 @@ class HandVis extends Component {
     // Working address: 127.0.0.1:9583
     // Docs: https://threejs.org/docs/
     // Command to start server: python -m http.server 9583
+
+    this.animate();
 
   };
 
@@ -307,7 +319,7 @@ class HandVis extends Component {
 
   }
   render() {
-    return (<div ref={ref => (this.mount = ref)}/>)
+    return (<canvas ref={this.canvasRef} />)
     }
 
   }

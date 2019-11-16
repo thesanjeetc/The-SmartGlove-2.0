@@ -4,7 +4,7 @@ import { MenuBar } from "./Components/Menu";
 import { StatusContainer } from "./Components/Status";
 import BarChart from "./Graphs/BarChart";
 import LineChart from "./Graphs/LineChart";
-import{ HandVis} from "./Visualisation/hand";
+import { HandVis } from "./Visualisation/hand";
 
 // Chart.defaults.global.defaultFontFamily = "Roboto, sans-serif";
 // https://github.com/chartjs/Chart.js/issues/2437#issuecomment-216530491
@@ -42,7 +42,7 @@ class Dashboard extends React.Component {
           </Container>
           <Container className="h-full lg:w-2/5 w-full p-4">
             <Tile className="p-4">
-                <HandVis/>
+            <HandVis />
             </Tile>
           </Container>
         </Container>
