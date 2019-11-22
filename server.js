@@ -35,7 +35,7 @@ let currentState = {
 let dataStream;
 let simulate = true;
 let connState;
-let streaming = false;
+let streaming = true;
 let batt = "-";
 let roomID = "glove";
 
