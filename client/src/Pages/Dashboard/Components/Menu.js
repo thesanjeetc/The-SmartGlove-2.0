@@ -13,20 +13,7 @@ import {
   faVideo
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
-
-const MenuButton = props => {
-  return (
-    <BaseComponent
-      onClick={props.onClick}
-      baseClass="menubutton bg-transparent w-24 h-24 inline flex"
-      {...props}
-    >
-      <div className="m-auto">
-        <FontAwesomeIcon icon={props.icon} />
-      </div>
-    </BaseComponent>
-  );
-};
+import { Button, MenuButton } from "./Misc";
 
 const MenuBar = props => {
   return (
@@ -38,17 +25,22 @@ const MenuBar = props => {
     >
       <div className="h-1/3 flex-1">
         <MenuButton icon={faHome} />
-        <MenuButton icon={faWaveSquare} />
+        <MenuButton
+          icon={faWaveSquare}
+          selectedColor="bg-main"
+          stateName="simulate"
+        />
         <MenuButton icon={faPhoneAlt} />
         <MenuButton icon={faVideo} />
       </div>
       <MenuButton
         icon={faAdjust}
-        className="self-end"
+        className="self-end menuButton"
         onClick={() => {
           GlobalState.darkmode = !GlobalState.darkmode;
           localStorage.setItem("darkmode", GlobalState.darkmode.toString());
           props.pageRefresh();
+          console.log("hi");
         }}
       />
     </BaseComponent>

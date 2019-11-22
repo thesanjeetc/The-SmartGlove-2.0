@@ -1,13 +1,13 @@
 import React from "react";
 import Chart from "chart.js";
-import { readStream } from "../Other/api";
+import { syncState } from "../Other/api";
 import Config from "../ConfigFile";
 
 class BarChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newData: new Array(10).fill(0)
+      newData: new Array(10).fill(1)
     };
 
     this.canvasRef = React.createRef();
@@ -28,7 +28,7 @@ class BarChart extends React.Component {
   }
 
   componentDidMount() {
-    readStream((err, datapoints) =>
+    syncState("sensorData", datapoints =>
       this.setState({
         newData: datapoints
       })

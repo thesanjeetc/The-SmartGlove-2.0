@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tile, Container } from "./Base";
-import { Button, ClickButton } from "./Misc";
+import { Button, ClickButton, ControlButton } from "./Misc";
 import {
   startStream,
   stopStream,
   onStateChange,
-  streamState
+  streamState,
+  syncState,
+  stateUpdate
 } from "../Other/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -54,33 +56,35 @@ const GloveState = props => {
 };
 
 const StatusContainer = props => {
-  const [status, setStatus] = useState(false, "-", "-");
+  const [status, setStatus] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState("-");
+  const [elapsedTime, setTime] = useState("-");
 
-  onStateChange((err, state) => {
-    setStatus(state);
-  });
+  useEffect(() => {
+    syncState("gloveConnect", setStatus);
+    syncState("batteryLevel", setBatteryLevel);
+    syncState("elapsedTime", setTime);
+  }, []);
 
   return (
     <Tile className="">
       <div className="w-full">
-        <Indicator connected={status[0]} />
-        <GloveState icon={faBatteryThreeQuarters} stateValue={status[1]} />
-        <GloveState icon={faStopwatch} stateValue={status[1]} />
+        <Indicator connected={status} />
+        <GloveState icon={faBatteryThreeQuarters} stateValue={batteryLevel} />
+        <GloveState icon={faStopwatch} stateValue={elapsedTime} />
       </div>
       <div className="w-full flex flex-wrap self-end">
-        <ClickButton
+        <ControlButton
           icon={faPlay}
           clickedIcon={faPause}
           className="h-32 rounded-bl-lg"
-          handleClick={paused => (paused ? stopStream() : startStream())}
-          updateState={state => streamState(state)}
+          stateName="streaming"
         />
-        <ClickButton
+        <ControlButton
           icon={faCircle}
           clickedIcon={faStop}
           className="h-32 rounded-br-lg"
-          handleClick={clicked => console.log(clicked)}
-          // updateState={state => streamState(state)}
+          stateName="recording"
         />
       </div>
     </Tile>

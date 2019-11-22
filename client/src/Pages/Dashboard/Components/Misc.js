@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "./Base";
+import {
+  startStream,
+  stopStream,
+  onStateChange,
+  streamState,
+  syncState,
+  stateUpdate
+} from "../Other/api";
 
 const Button = props => {
   return (
-    <BaseComponent
-      onClick={props.onClick}
-      baseClass="controlButton w-1/2 bg-transparent block-inline content-center flex"
-      {...props}
-    >
+    <BaseComponent {...props}>
       <div className="m-auto">
-        <FontAwesomeIcon icon={props.icon} size="2x" />
+        <FontAwesomeIcon icon={props.icon} size={props.iconSize || "1x"} />
       </div>
     </BaseComponent>
   );
@@ -18,21 +22,56 @@ const Button = props => {
 
 const ClickButton = props => {
   const [clicked, setClicked] = useState(false);
-  try {
-    props.updateState(setClicked);
-  } catch {}
+  useEffect(() => {
+    syncState(props.stateName, setClicked);
+  }, []);
   return (
     <Button
       onClick={() => {
         setClicked(!clicked);
+        stateUpdate(props.stateName, !clicked);
         try {
-          props.handleClick(clicked);
+          props.callback();
         } catch {}
       }}
-      icon={clicked ? props.clickedIcon : props.icon}
+      icon={clicked ? props.clickedIcon || props.icon : props.icon}
+      iconSize={props.iconSize}
       className={props.className}
+      baseClass={
+        clicked
+          ? [props.baseClass, props.selectedColor].join(" ") || props.baseClass
+          : props.baseClass
+      }
     />
   );
 };
 
-export { Button, ClickButton };
+const MenuButton = props => {
+  if (props.stateName) {
+    return (
+      <ClickButton
+        baseClass="menubutton bg-transparent w-24 h-24 inline flex"
+        {...props}
+      />
+    );
+  } else {
+    return (
+      <Button
+        baseClass="menubutton bg-transparent w-24 h-24 inline flex"
+        {...props}
+      />
+    );
+  }
+};
+
+const ControlButton = props => {
+  return (
+    <ClickButton
+      baseClass="controlButton w-1/2 bg-transparent block-inline content-center flex"
+      iconSize="2x"
+      {...props}
+    />
+  );
+};
+
+export { Button, ControlButton, MenuButton, ClickButton };

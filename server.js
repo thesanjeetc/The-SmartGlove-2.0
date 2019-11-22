@@ -13,34 +13,85 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
 
+let currentState = {
+  simulate: true,
+  streaming: false,
+  conn: false,
+  darkmode: true,
+  recording: false,
+  batteryLevel: "-",
+  awesomeness: false,
+  elapsedTime: "-"
+};
+
+// Object.entries(syncStates).forEach(([state, value], index) => {
+//   console.log(state, value);
+//   io.on(state, newState => {
+//     syncStates.state = newState;
+//     io.emit(state, newState);
+//   });
+// });
+
 let dataStream;
+let simulate = true;
 let connState;
-let streaming = true;
+let streaming = false;
 let batt = "-";
 let roomID = "glove";
 
 battlevel = "24%";
 
-const simulateData = (client, interval) => {
+const simulateData = () => {
   let x = 0;
-  dataStream = setInterval(() => {
+  dataStream = setInterval(newState => {
     let data = [];
     x = x + 0.06;
+
     for (var i = 0; i < 12; i++) {
-      data.push(Math.abs(100 * Math.sin(i * 0.2 + x)));
+      if (simulate) {
+        data.push(Math.abs(100 * Math.sin(i * 0.2 + x)));
+      } else {
+        data.push(1);
+      }
     }
+
     //console.log(data);
-    io.emit("newData", data);
-  }, interval);
+    io.emit("stateChange", "sensorData", data);
+  }, 18);
 };
 
 io.on("connection", client => {
-  client.emit("connState", connState, batt);
-  streaming ? client.emit("startStream") : client.emit("stopStream");
-  client.on("startStream", (interval, numSensors) => {
+  // client.emit("connState", connState, batt);
+  // client.emit("stateUpdate", syncStates);
+  // streaming ? client.emit("startStream") : client.emit("stopStream");
+  // setTimeout(() => {
+  //   console.log("-----");
+  //   Object.entries(syncStates).forEach(([state, value], index) => {
+  //     client.emit(state, value);
+  //     console.log(state, value);
+  //   });
+  //   console.log("-----");
+  // }, 1000);
+  setTimeout(() => {
+    client.emit("stateSync", currentState);
+  }, 300);
+
+  client.on("stateChange", (state, newState) => {
+    currentState[state] = newState;
+    console.log(state);
+    if (state == "streaming") {
+      newState ? simulateData() : clearInterval(dataStream);
+    }
+    if (state == "simulate") {
+      simulate = !simulate;
+    }
+    client.broadcast.emit("stateChange", state, newState);
+  });
+
+  client.on("startStream", () => {
     streaming = true;
     client.broadcast.emit("startStream");
-    simulateData(client, interval);
+    simulateData(client);
   });
 
   client.on("stopStream", () => {
@@ -51,12 +102,11 @@ io.on("connection", client => {
   });
 });
 
-const gloveConn = io.of("/" + roomID);
-gloveConn.on("connection", socket => {
+const glove = io.of("/" + roomID);
+glove.on("connection", socket => {
   //clearInterval(dataStream);
-  connState = true;
-  console.log("connected");
-  io.emit("connState", connState, batt);
+  currentState.gloveConn = true;
+  io.emit("gloveConnect", true);
 
   // socket.on('gloveStream', (socket, data) => {
   //   simulateData(io, 20);
@@ -67,9 +117,8 @@ gloveConn.on("connection", socket => {
   // });
 
   socket.on("disconnect", socket => {
-    connState = false;
-    batt = "-";
-    io.emit("connState", connState, "-");
+    currentState.gloveConn = false;
+    io.emit("gloveConnect", false);
   });
 
   // socket.on('batteryLevel', (socket, level) => {

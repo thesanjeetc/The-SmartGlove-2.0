@@ -1,20 +1,21 @@
-html, body {
+html,
+body {
   height: 100vh;
-  width:100vw;
+  width: 100vw;
 }
 
-iframe{
-  border: 0; 
-  position:fixed; 
-  top:0; 
-  left:0; 
-  right:0; 
-  bottom:0; 
-  width:100%; 
-  height:100%
+iframe {
+  border: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 .chart-wrapper {
-  width:46%;
+  width: 46%;
   height: 46vh;
   padding: 1%;
   display: inline-block;
@@ -26,67 +27,75 @@ iframe{
   }
 }
 
-.tile-rounded{
+.tile-rounded {
   border-radius: 0.5em;
-  height:50%;
+  height: 50%;
 }
 
-.bg-dark-tile{
+.bg-dark-tile {
   background-color: #1c2138;
   color: #e2e8f0;
-  transition:0.2s;
+  transition: 0.2s;
 }
 
-.bg-dark-menu{
-  background-color:#242a42;
+.bg-dark-menu {
+  background-color: #242a42;
   color: #e2e8f0;
-  transition:0.2s;
+  transition: 0.2s;
 }
 
-.bg-light-main{
+.bg-light-main {
   background-color: #e2e8f0;
-  transition:0.2s;
+  transition: 0.2s;
 }
 
-.bg-light-tile{
+.bg-main {
+  /* background-color: #5271ff !important; */
+  border-right: 3px solid #5271ff;
+  /* border-left: 3px solid transparent; */
+  color: #5271ff;
+  transition: 0.2s;
+}
+
+.bg-light-tile {
   background-color: #f7fafc;
   color: #718096;
-  transition:0.2s;
+  transition: 0.2s;
 }
 
-.bg-light-menu{
-  background-color:#cbd5e0;
+.bg-light-menu {
+  background-color: #cbd5e0;
   color: #718096;
-  transition:0.2s;
+  transition: 0.2s;
 }
 
-.bg-dark-main{
-  background-color: #171C30;
-  transition:0.2s;
+.bg-dark-main {
+  background-color: #171c30;
+  transition: 0.2s;
 }
 
-.controlButton{
-  transition:0.1s ease;
-  padding:0%;
+.controlButton {
+  transition: 0.1s ease;
+  padding: 0%;
 }
 
-.menubutton{
-  transition:0.1s ease;
-  padding:0%;
+.menubutton {
+  transition: 0.1s ease;
+  padding: 0%;
   font-size: 20px;
 }
 
-.controlButton:hover{
+.controlButton:hover {
   background-color: #5271ff;
-  color:white;
+  color: white;
 }
 
-.menubutton:hover{
+.menubutton:hover {
   background-color: #5271ff;
-  color:white;
+  color: white;
 }
 
-.disconnected{
+.disconnected {
   background: #ff4d4d;
   box-shadow: 0 0 0 rgba(218, 81, 81, 0.603);
   -moz-animation: disPulse 2s infinite;
@@ -94,7 +103,7 @@ iframe{
   animation: disPulse 2s infinite;
 }
 
-.connected{
+.connected {
   background: #16cf77;
   box-shadow: 0 0 0 rgba(22, 207, 119, 0.603);
   -moz-animation: connPulse 2s infinite;
@@ -133,11 +142,10 @@ iframe{
   }
 }
 
-.disText{
+.disText {
   color: #ff4d4d;
 }
 
-.connText{
+.connText {
   color: #16cf77;
 }
-
