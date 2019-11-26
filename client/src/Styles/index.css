@@ -49,6 +49,22 @@ iframe {
   transition: 0.2s;
 }
 
+@keyframes onload-animate {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.panel {
+  /* This section calls the slideInFromLeft animation we defined above */
+  animation: 0.5s ease-out 0s 1 onload-animate;
+}
+
 .bg-main {
   /* background-color: #5271ff !important; */
   border-right: 3px solid #5271ff;

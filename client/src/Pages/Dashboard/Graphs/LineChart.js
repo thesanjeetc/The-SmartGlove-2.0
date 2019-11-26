@@ -1,6 +1,6 @@
 import React from "react";
 import Chart from "chart.js";
-import { syncState } from "../Other/api";
+import { StateHandler } from "../Other/API";
 import Config from "../ConfigFile";
 
 class LineChart extends React.Component {
@@ -63,9 +63,9 @@ class LineChart extends React.Component {
   }
 
   componentDidMount() {
-    syncState("sensorData", datapoints =>
+    StateHandler.subscribe("sensorData", dataPoints =>
       this.setState({
-        newData: datapoints
+        newData: dataPoints
       })
     );
 

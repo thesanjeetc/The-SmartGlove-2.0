@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "./Base";
-import {
-  startStream,
-  stopStream,
-  onStateChange,
-  streamState,
-  syncState,
-  stateUpdate
-} from "../Other/api";
+import { StateHandler } from "../Other/API";
 
 const Button = props => {
   return (
@@ -23,13 +16,13 @@ const Button = props => {
 const ClickButton = props => {
   const [clicked, setClicked] = useState(false);
   useEffect(() => {
-    syncState(props.stateName, setClicked);
+    StateHandler.subscribe(props.stateName, setClicked);
   }, []);
   return (
     <Button
       onClick={() => {
         setClicked(!clicked);
-        stateUpdate(props.stateName, !clicked);
+        StateHandler.update(props.stateName, !clicked);
         try {
           props.callback();
         } catch {}

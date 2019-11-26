@@ -1,6 +1,6 @@
 import React from "react";
 import Chart from "chart.js";
-import { syncState } from "../Other/api";
+import { StateHandler } from "../Other/API";
 import Config from "../ConfigFile";
 
 class BarChart extends React.Component {
@@ -28,9 +28,9 @@ class BarChart extends React.Component {
   }
 
   componentDidMount() {
-    syncState("sensorData", datapoints =>
+    StateHandler.subscribe("sensorData", dataPoints =>
       this.setState({
-        newData: datapoints
+        newData: dataPoints
       })
     );
 

@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tile, Container } from "./Base";
 import { Button, ClickButton, ControlButton } from "./Misc";
-import {
-  startStream,
-  stopStream,
-  onStateChange,
-  streamState,
-  syncState,
-  stateUpdate
-} from "../Other/api";
+import { StateHandler } from "../Other/API";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdjust,
@@ -61,9 +54,9 @@ const StatusContainer = props => {
   const [elapsedTime, setTime] = useState("-");
 
   useEffect(() => {
-    syncState("gloveConnect", setStatus);
-    syncState("batteryLevel", setBatteryLevel);
-    syncState("elapsedTime", setTime);
+    StateHandler.subscribe("gloveConnect", setStatus);
+    StateHandler.subscribe("batteryLevel", setBatteryLevel);
+    StateHandler.subscribe("elapsedTime", setTime);
   }, []);
 
   return (

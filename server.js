@@ -32,8 +32,8 @@ let currentState = {
 //   });
 // });
 
+let x = true;
 let dataStream;
-let simulate = true;
 let connState;
 let streaming = true;
 let batt = "-";
@@ -48,7 +48,7 @@ const simulateData = () => {
     x = x + 0.06;
 
     for (var i = 0; i < 12; i++) {
-      if (simulate) {
+      if (currentState["simulate"]) {
         data.push(Math.abs(100 * Math.sin(i * 0.2 + x)));
       } else {
         data.push(1);
@@ -57,7 +57,7 @@ const simulateData = () => {
 
     //console.log(data);
     io.emit("stateChange", "sensorData", data);
-  }, 18);
+  }, 20);
 };
 
 io.on("connection", client => {
@@ -74,31 +74,15 @@ io.on("connection", client => {
   // }, 1000);
   setTimeout(() => {
     client.emit("stateSync", currentState);
-  }, 300);
+  }, 400);
 
   client.on("stateChange", (state, newState) => {
     currentState[state] = newState;
     console.log(state);
     if (state == "streaming") {
-      newState ? simulateData() : clearInterval(dataStream);
-    }
-    if (state == "simulate") {
-      simulate = !simulate;
+      currentState[state] ? simulateData() : clearInterval(dataStream);
     }
     client.broadcast.emit("stateChange", state, newState);
-  });
-
-  client.on("startStream", () => {
-    streaming = true;
-    client.broadcast.emit("startStream");
-    simulateData(client);
-  });
-
-  client.on("stopStream", () => {
-    // Cancel Stream
-    streaming = false;
-    client.broadcast.emit("stopStream");
-    clearInterval(dataStream);
   });
 });
 

@@ -10,7 +10,9 @@ import {
   faBatteryThreeQuarters,
   faStopwatch,
   faPhoneAlt,
-  faVideo
+  faVideo,
+  faMobileAlt,
+  faQrcode
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
 import { Button, MenuButton } from "./Misc";
@@ -31,18 +33,18 @@ const MenuBar = props => {
           stateName="simulate"
         />
         <MenuButton icon={faPhoneAlt} />
-        <MenuButton icon={faVideo} />
+        <MenuButton icon={faQrcode} />
       </div>
-      <MenuButton
-        icon={faAdjust}
-        className="self-end menuButton"
-        onClick={() => {
-          GlobalState.darkmode = !GlobalState.darkmode;
-          localStorage.setItem("darkmode", GlobalState.darkmode.toString());
-          props.pageRefresh();
-          console.log("hi");
-        }}
-      />
+      <div className="self-end">
+        <MenuButton
+          icon={faAdjust}
+          onClick={() => {
+            GlobalState.darkmode = !GlobalState.darkmode;
+            localStorage.setItem("darkmode", GlobalState.darkmode.toString());
+            props.pageRefresh();
+          }}
+        />
+      </div>
     </BaseComponent>
   );
 };
