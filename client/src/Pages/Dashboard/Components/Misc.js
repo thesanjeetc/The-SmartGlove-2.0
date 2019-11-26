@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "./Base";
-import { StateHandler } from "../Other/API";
+import { StateHandler } from "../Other/api";
 
 const Button = props => {
   return (
