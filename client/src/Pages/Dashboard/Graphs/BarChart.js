@@ -1,6 +1,6 @@
 import React from "react";
 import Chart from "chart.js";
-import { StateHandler } from "../Other/API";
+import { StateHandler } from "../Other/api";
 import Config from "../ConfigFile";
 
 class BarChart extends React.Component {
