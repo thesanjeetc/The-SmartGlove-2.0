@@ -27,8 +27,15 @@ class SyncStateHandler extends StateHandler {
   constructor() {
     super();
 
+    let dev = true
+    let devIP = "159.65.92.200";
+    
     if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-      this.socket = openSocket("http://127.0.0.1:8000");
+      if(dev){
+        this.socket = openSocket("http://" + devIP + ":8000");
+      } else {
+        this.socket = openSocket("http://127.0.0.1:8000");
+      }
     } else {
       this.socket = openSocket(window.location.hostname);
     }
