@@ -1,6 +1,6 @@
 var express = require("express");
 var path = require("path");
-var Pool = require("pg").Pool;
+// var Pool = require("pg").Pool;
 var app = express();
 
 var server = require("http").Server(app);
