@@ -9,11 +9,7 @@ let devIP = "159.65.92.200";
 let StateHandler;
 
 const joinRoom = roomID => {
-  address =
-    (dev ? devIP : window.location.hostname) +
-    ":" +
-    (process.env.PORT || 8000) +
-    "/";
+  address = (dev ? devIP : window.location.hostname) + "/";
 
   console.log(address + roomID);
 

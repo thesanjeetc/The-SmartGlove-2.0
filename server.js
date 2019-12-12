@@ -8,7 +8,7 @@ var server = require("http").Server(app);
 var io = require("socket.io")(server);
 var Session = require("./Sessions");
 
-server.listen(process.env.PORT || 8000);
+server.listen(process.env.PORT || 80);
 
 app.use(express.static(path.join(__dirname, "client/build")));
 
