@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Container, Tile } from "./Components/Base";
 import { MenuBar } from "./Components/Menu";
+import { Overlay } from "./Components/Misc";
 import { StatusContainer } from "./Components/Status";
+import { joinRoom } from "./Other/api";
 import BarChart from "./Graphs/BarChart";
 import LineChart from "./Graphs/LineChart";
 
@@ -12,6 +14,8 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+
+    joinRoom(props.roomID || "demo");
   }
 
   render() {
@@ -43,6 +47,7 @@ class Dashboard extends React.Component {
             <Tile className="p-4"></Tile>
           </Container>
         </Container>
+        <Overlay />
       </Container>
     );
   }

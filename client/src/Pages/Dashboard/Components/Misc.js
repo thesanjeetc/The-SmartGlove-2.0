@@ -3,6 +3,27 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "./Base";
 import { StateHandler } from "../Other/api";
 
+const Overlay = props => {
+  const [clicked, setClicked] = useState(false);
+  useEffect(() => {
+    StateHandler.subscribe("overlay", setClicked);
+  }, []);
+  let baseClass = ["w-screen h-screen bg-gray-900 absolute z-50"];
+  return (
+    <BaseComponent
+      baseClass={
+        clicked
+          ? [baseClass, "opacity-25"].join(" ")
+          : [baseClass, "opacity-0 hidden"].join(" ")
+      }
+      onClick={() => {
+        setClicked(!clicked);
+        StateHandler.update("overlay", !clicked);
+      }}
+    />
+  );
+};
+
 const Button = props => {
   return (
     <BaseComponent {...props}>
@@ -21,10 +42,16 @@ const ClickButton = props => {
   return (
     <Button
       onClick={() => {
+        console.log(props.stateName);
         setClicked(!clicked);
-        StateHandler.update(props.stateName, !clicked);
+        StateHandler.update(
+          props.stateName,
+          !clicked,
+          props.stateSync ? false : true
+        );
+        console.log(clicked);
         try {
-          props.callback();
+          props.callback(!clicked);
         } catch {}
       }}
       icon={clicked ? props.clickedIcon || props.icon : props.icon}
@@ -67,4 +94,4 @@ const ControlButton = props => {
   );
 };
 
-export { Button, ControlButton, MenuButton, ClickButton };
+export { Button, ControlButton, MenuButton, ClickButton, Overlay };

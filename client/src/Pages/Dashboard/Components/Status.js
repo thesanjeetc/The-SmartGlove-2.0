@@ -42,7 +42,7 @@ const GloveState = props => {
     <div className="w-full flex flex-wrap justify-center mt-4">
       <FontAwesomeIcon icon={props.icon} size="1x" />
       <p className="text-base font-mono inline ml-6 -mt-1">
-        {props.stateValue}
+        {props.stateValue + (props.stateValue == "-" ? "" : props.end || "")}
       </p>
     </div>
   );
@@ -63,7 +63,11 @@ const StatusContainer = props => {
     <Tile className="">
       <div className="w-full">
         <Indicator connected={status} />
-        <GloveState icon={faBatteryThreeQuarters} stateValue={batteryLevel} />
+        <GloveState
+          icon={faBatteryThreeQuarters}
+          stateValue={batteryLevel}
+          end="%"
+        />
         <GloveState icon={faStopwatch} stateValue={elapsedTime} />
       </div>
       <div className="w-full flex flex-wrap self-end">

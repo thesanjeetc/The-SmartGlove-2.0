@@ -1,5 +1,3 @@
-import openSocket from "socket.io-client";
-
 class StateHandler {
   constructor() {
     this.currentState = {};
@@ -14,6 +12,7 @@ class StateHandler {
   }
 
   update(state, value) {
+    console.log("[LOCAL] State Update: " + state);
     if (this.stateCallbacks[state] !== undefined) {
       this.currentState[state] = value;
       this.stateCallbacks[state].forEach((callback, index) => {
@@ -24,22 +23,9 @@ class StateHandler {
 }
 
 class SyncStateHandler extends StateHandler {
-  constructor() {
+  constructor(socket) {
     super();
-
-    let dev = true
-    let devIP = "159.65.92.200";
-    
-    if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-      if(dev){
-        this.socket = openSocket("http://" + devIP + ":8000");
-      } else {
-        this.socket = openSocket("http://127.0.0.1:8000");
-      }
-    } else {
-      this.socket = openSocket(window.location.hostname);
-    }
-
+    this.socket = socket;
     this.setup();
   }
 
@@ -61,6 +47,8 @@ class SyncStateHandler extends StateHandler {
   }
 
   update(state, value, sync = true) {
+    console.log("[LOCAL] State Update: " + state);
+    console.log(sync);
     this.currentState[state] = value;
     sync
       ? this.socket.emit("stateChange", state, value)

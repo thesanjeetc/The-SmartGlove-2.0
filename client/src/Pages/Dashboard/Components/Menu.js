@@ -16,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
 import { Button, MenuButton } from "./Misc";
+import { StateHandler } from "../Other/StateHandler";
 
 const MenuBar = props => {
   return (
@@ -33,7 +34,14 @@ const MenuBar = props => {
           stateName="simulate"
         />
         <MenuButton icon={faPhoneAlt} />
-        <MenuButton icon={faQrcode} />
+        <MenuButton
+          icon={faQrcode}
+          stateName="overlay"
+          stateSync={false}
+          callback={state => {
+            StateHandler.update("overlay");
+          }}
+        />
       </div>
       <div className="self-end">
         <MenuButton

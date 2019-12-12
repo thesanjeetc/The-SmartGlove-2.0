@@ -1,41 +1,43 @@
 var io = require("socket.io-client");
 
 class Glove {
-  constructor(local = true) {
-    this.uid = "06f159e3";
+  constructor(roomID, local = false) {
+    this.roomID = roomID;
     this.batteryLevel = 100;
     this.timer = 0;
+    this.streamInterval = 10;
     this.dataStream;
 
     var socket = io.connect(
       local
-        ? "http://127.0.0.1:8000/glove"
-        : "https://thesmartglove.herokuapp.com/glove",
-      { reconnect: true }
+        ? "http://127.0.0.1:8000/" + roomID
+        : "https://thesmartglove.herokuapp.com/" + roomID,
+      { query: { room: roomID }, reconnect: true }
     );
 
     socket.on("connect", () => {
+      socket.emit("gloveConnect");
       setInterval(() => {
         socket.emit("batteryLevel", this.simulateBattery());
-      }, 1000);
+      }, 800);
     });
 
-    socket.on("startStream", () => {
-      this.dataStream = setInterval(() => {
-        socket.emit("sensorData", this.simulateData());
-      }, 20);
-    });
-
-    socket.on("stopStream", () => {
-      clearInterval(this.dataStream);
+    socket.on("streamState", state => {
+      if (state) {
+        this.dataStream = setInterval(() => {
+          socket.emit("sensorData", this.simulateData());
+        }, this.streamInterval);
+      } else {
+        clearInterval(this.dataStream);
+      }
     });
   }
 
   simulateData() {
     let sensorData = [];
-    this.timer += 0.06;
+    this.timer += 0.04;
     for (var i = 0; i < 12; i++) {
-      sensorData.push(Math.abs(100 * Math.sin(i * 0.4 + this.timer)));
+      sensorData.push(Math.abs(100 * Math.sin(i * 0.55 + this.timer)));
     }
     return sensorData;
   }
@@ -46,4 +48,6 @@ class Glove {
   }
 }
 
-new Glove(false);
+var args = process.argv.slice(2);
+
+new Glove(args[0], true);

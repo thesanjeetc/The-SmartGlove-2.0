@@ -18,6 +18,10 @@ const routing = (
     <div>
       <Route path="/" exact component={Landing} />
       <Route path="/demo" component={Dashboard} />
+      <Route
+        path="/room/:id"
+        component={props => <Dashboard roomID={props.match.params.id} />}
+      />
     </div>
   </Router>
 );
