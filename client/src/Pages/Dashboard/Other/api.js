@@ -3,13 +3,15 @@ import Config from "../ConfigFile";
 import { SyncStateHandler } from "./StateHandler";
 
 let socket;
+let address;
 let dev = false;
 let devIP = "159.65.92.200";
-let address = dev ? "http://" + devIP + ":8000" : "http://127.0.0.1:8000/";
 let StateHandler;
 
 const joinRoom = roomID => {
-  if (!process.env.NODE_ENV === "development") {
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+    address = dev ? "http://" + devIP + ":8000" : "http://127.0.0.1:8000/";
+  } else {
     address = window.location.hostname;
   }
 
