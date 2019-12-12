@@ -12,7 +12,7 @@ const joinRoom = roomID => {
   if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     address = dev ? "http://" + devIP + ":8000" : "http://127.0.0.1:8000/";
   } else {
-    address = window.location.hostname;
+    address = "https://thesmartglove.herokuapp.com:" + process.env.PORT + "/";
   }
 
   let socket = io.connect(address + roomID, {
