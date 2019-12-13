@@ -14,7 +14,7 @@ class Session {
       elapsedTime: "-"
     };
 
-    this.streamInterval = 15;
+    this.streamInterval = 20;
     this.numSensors = 12;
     this.dataStream;
     this.gloveData = [new Array(this.numSensors).fill(1)];
