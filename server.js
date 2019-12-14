@@ -27,7 +27,7 @@ const simulateData = (client, interval) => {
     let data = [];
     x = x + 0.06;
     for (var i = 0; i < 12; i++) {
-      data.push(Math.abs(100 * Math.sin(i * 0.2 + x)));
+      data.push(Math.abs(Math.sin(i * 0.2 + x))*100.);
     }
     //console.log(data);
     io.emit("newData", data);

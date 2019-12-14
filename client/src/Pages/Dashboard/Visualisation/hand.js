@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 // import * as THREE from "three";
-import { fragshader, vertexshader } from "../material.json";
+import { fragshader, vertshader } from "../material.js";
 import { readStream } from "../Other/api";
 import Config from "../ConfigFile";
 // import FUCKINGWORK from "../fuckign_work.js"
@@ -16,11 +16,16 @@ OBJLoader(THREE);
 
 class HandVis extends Component {
   constructor(props) {
+
     super(props);
     this.state = {
-      newData: new Array(10).fill(0)
+      newData: new Array(10).fill(0),
+      x : 0,
+      y : 0
     };
-    this.mouse = new THREE.Vector2();
+
+    this.onMouseMove = this.onMouseMove.bind(this);
+
     // Set up global variables
     // Set up Three.js scene, camera and
     this.scene = new THREE.Scene(); //all in constructor
@@ -95,27 +100,37 @@ class HandVis extends Component {
 
       // Sensor data
       data: {
-        value: this.newData
+        value: this.state.newData
       }
     };
 
     // GLSL Shader Material
-    // this.pressureMat = new THREE.ShaderMaterial({
-    //   uniforms: this.uniforms,
-    //   vertexShader: vertexshader,
-    //   fragmentShader: fragshader
-    // })
+    this.pressureMat = new THREE.ShaderMaterial({
+      uniforms: this.uniforms,
+      vertexShader: vertshader,
+      fragmentShader: fragshader
+    })
 
-    this.pressureMat = new THREE.MeshLambertMaterial({
-      color: "#b3b3b3",
-      wireframe: false
-    });
+    // this.pressureMat = new THREE.MeshLambertMaterial({
+    //   color: "#262d47",
+    //   wireframe: false
+    // });
 
     // Set up event listening functions
     window.addEventListener("dblclick", this.onDblMouseClick, false);
     window.addEventListener("keydown", this.onKeyDownUp, false);
     window.addEventListener("keyup", this.onKeyDownUp, false);
   }
+
+
+
+  onMouseMove(e) {
+    // console.log("hi?")
+    this.setState({mouse : { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }});
+    console.log(this.state.mouse)
+  }
+
+
 
   resizeCanvasToDisplaySize() {
     const canvas = document.getElementById("visContainer");
@@ -127,7 +142,7 @@ class HandVis extends Component {
 
     // adjust displayBuffer size to match
     if (canvas.width !== width || canvas.height !== height) {
-      // you must pass false here or three.js sadly fights the browser
+      // you must pass false here or three.js sadly fights the Bowser
       this.renderer.setSize(width, height, false);
       this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
@@ -148,7 +163,7 @@ class HandVis extends Component {
     });
 
     // Plane geometry, used for testing:
-    // var geometry = new THREE.PlaneGeometry( 100, 100, 10,10 );
+    // Cube000000this..this// var geometry = new THREE.PlaneGeometry( 100, 100, 10,10 );
     // var material = pressureMat;
     // mesh = new THREE.Mesh( geometry, material );
 
@@ -156,12 +171,17 @@ class HandVis extends Component {
     console.log(this.mesh);
     this.scene.add(this.mesh);
   }
+
+
   animate = () => {
     this.resizeCanvasToDisplaySize();
     this.controls.update();
+    this.uniforms.data.value = this.state.newData;
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.animate);
   };
+
+
   componentDidMount() {
     // Set up renderer and orbit camera controls
     this.renderer = new THREE.WebGLRenderer({
@@ -195,7 +215,6 @@ class HandVis extends Component {
     }
 
     // Update sensor data and render
-    this.uniforms.data.value = this.newData;
     this.renderer.render(this.scene, this.camera);
 
     // NOTES
@@ -248,13 +267,27 @@ class HandVis extends Component {
     // Generate mouse coordinates from 0 to 1 (for x and y)
     const canvas = document.getElementById("visContainer");
 
-    this.mouse.x = (event.clientX / canvas.innerWidth) * 2 - 1;
-    this.mouse.y = -(event.clientY / canvas.innerHeight) * 2 + 1;
+    // this.mouse.x = (event.clientX / window.innerWidth); // * 2 - 1
+    // this.mouse.y = (event.clientY / window.innerHeight); // -1 * 2 + 1
+
+    // this.mouse.x = (this.state.x / canvas.clientWidth);
+    // this.mouse.y = (this.state.y / canvas.clientHeight);
+
+    // // this.mouse.x = (this.state.x / 640);
+    // // this.mouse.y = (this.state.y / 520);
+
+    this.mouse.x = (this.state.mouse.x / this.renderer.getSize().x);
+    this.mouse.y = (this.state.mouse.y / this.renderer.getSize().y);
+
+    console.log("Mouse:")
+    console.log(this.mouse)
 
     // Calculate objects intersecting the picking ray
     this.raycaster.setFromCamera(this.mouse, this.camera);
     let ray = this.raycaster.intersectObjects(this.mesh.children);
+    console.log(this.raycaster.ray.at(1))
     for (var i = 0; i < ray.length; i++) {
+      console.log("ijsbfjsbgdi")
       console.log(this.sens_num, ray[i].uv);
       this.posarr[this.sens_num] = ray[i].uv;
       this.uniforms.positions.value = this.posarr;
@@ -286,7 +319,7 @@ class HandVis extends Component {
   // };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return false;
+    return this.state.newData != nextState.newData;;
   }
 
   addCustomSceneObjects = () => {
@@ -329,8 +362,10 @@ class HandVis extends Component {
     window.cancelAnimationFrame(this.requestID);
   }
   render() {
+    const { x, y } = this.state;
     return (
       <div
+        onMouseMove = {this.onMouseMove}
         className="w-full h-full"
         id="visContainer"
         ref={ref => (this.mount = ref)}
