@@ -10,7 +10,7 @@ The SmartGlove is a prototype pressure sensing glove aimed at helping physiother
 1) Clone the repo.
 2) Run npm install
 3) Run cd client && npm install
-4) Start the server and React server separately.
+4) Start the express server and React server separately.
 5) Visit http://localhost:3000/demo
 
 ## Glove Simulation
