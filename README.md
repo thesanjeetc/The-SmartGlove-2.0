@@ -4,7 +4,7 @@
 ![Dashboard](https://cdn.discordapp.com/attachments/575028784395452464/659065057862221824/unknown.png)
 
 ## What is it?
-The SmartGlove is a prototype pressure sensing glove aimed at helping physiotherapists treat hand related injuries. This repo holds the code for web app, providing an interface to interact with the glove.
+The SmartGlove is a prototype pressure sensing glove aimed at helping physiotherapists treat hand related injuries. This repo holds the code for web app, providing an interface to interact with the glove. For more details, visit https://thesmartglove.herokuapp.com/
 
 ## Local Development
 1) Clone the repo.
