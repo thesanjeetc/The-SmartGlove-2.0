@@ -6,7 +6,7 @@
 ## What is it?
 The SmartGlove is a prototype pressure sensing glove aimed at helping physiotherapists treat hand related injuries. This repo holds the code for web app, providing an interface to interact with the glove. For more details, visit https://thesmartglove.herokuapp.com/
 
-## Local Development
+## Running it Locally
 1) Clone the repo.
 2) Run npm install
 3) Run cd client && npm install
