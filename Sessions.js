@@ -2,23 +2,32 @@ class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
+    this.streamInterval = 20;
+    this.numSensors = 12;
+    this.dataStream;
+    this.recordings = {
+      abc: "Recording 1",
+      def: "Recording 2",
+      ghi: "Recording 3",
+      jkl: "Recording 4",
+      mno: "Recording 5"
+    };
+    this.gloveData = [new Array(this.numSensors).fill(1)];
+    this.lastData = new Array(this.numSensors).fill(1);
 
     this.currentState = {
       simulate: true,
       streaming: false,
       gloveConnect: false,
-      darkmode: true,
       recording: false,
       batteryLevel: "-",
-      awesomeness: false,
-      elapsedTime: "-"
+      elapsedTime: "-",
+      recordings: this.recordings
     };
 
-    this.streamInterval = 20;
-    this.numSensors = 12;
-    this.dataStream;
-    this.gloveData = [new Array(this.numSensors).fill(1)];
-    this.lastData = new Array(this.numSensors).fill(1);
+    this.stateHandler = {
+      streaming: this.handleStreaming
+    };
 
     this.socket.on("connection", client => {
       client.on("clientConnect", () => {
@@ -28,14 +37,6 @@ class Session {
 
         client.on("stateChange", (state, newState) => {
           this.updateState(client, state, newState, true);
-
-          if (state == "streaming") {
-            newState ? this.startStream() : this.stopStream();
-
-            if (this.currentState["gloveConnect"]) {
-              this.socket.to(this.glove).emit("streamState", newState);
-            }
-          }
         });
       });
 
@@ -64,9 +65,23 @@ class Session {
 
   updateState(socket, stateName, stateValue, broadcast = false) {
     this.currentState[stateName] = stateValue;
+    this.handleStateChange(stateName, stateValue);
     broadcast
       ? socket.broadcast.emit("stateChange", stateName, stateValue)
       : socket.emit("stateChange", stateName, stateValue);
+  }
+
+  handleStateChange(state, value) {
+    if (this.stateHandler[state] !== undefined) {
+      this.stateHandler[state].call(this, value);
+    }
+  }
+
+  handleStreaming(stateValue) {
+    stateValue ? this.startStream() : this.stopStream();
+    if (this.currentState["gloveConnect"]) {
+      this.socket.to(this.glove).emit("streamState", newState);
+    }
   }
 
   startTimer() {
@@ -79,9 +94,8 @@ class Session {
         this.minutes +
         ":" +
         (this.time < 10 ? "0" : "") +
-        this.time;
-      this.currentState["elapsedTime"] = this.formattedTime;
-      this.socket.emit("stateChange", "elapsedTime", this.formattedTime);
+        (this.time % 60);
+      this.updateState(this.socket, "elapsedTime", this.formattedTime);
     }, 1000);
   }
 
@@ -98,19 +112,23 @@ class Session {
     return sensorData;
   }
 
-  startStream() {
+  getData() {
     let data;
+    if (this.currentState["simulate"]) {
+      data = this.simulateData();
+    } else if (this.currentState["gloveConnect"]) {
+      this.newData = this.gloveData.shift();
+      data = this.newData === undefined ? this.lastData : this.newData;
+    } else {
+      data = new Array(this.numSensors).fill(1);
+    }
+    return data;
+  }
+
+  startStream() {
     this.x = 0;
     this.dataStream = setInterval(() => {
-      if (this.currentState["simulate"]) {
-        data = this.simulateData();
-      } else if (this.currentState["gloveConnect"]) {
-        this.newData = this.gloveData.shift();
-        data = this.newData === undefined ? this.lastData : this.newData;
-      } else {
-        data = new Array(this.numSensors).fill(1);
-      }
-      this.socket.emit("stateChange", "sensorData", data);
+      this.socket.emit("stateChange", "sensorData", this.getData());
     }, this.streamInterval);
   }
 

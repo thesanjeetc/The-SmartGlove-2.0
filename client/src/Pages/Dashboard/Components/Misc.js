@@ -27,9 +27,13 @@ const Overlay = props => {
 const Button = props => {
   return (
     <BaseComponent {...props}>
-      <div className="m-auto">
-        <FontAwesomeIcon icon={props.icon} size={props.iconSize || "1x"} />
-      </div>
+      {props.icon ? (
+        <div className="m-auto">
+          <FontAwesomeIcon icon={props.icon} size={props.iconSize || "1x"} />
+        </div>
+      ) : (
+        props.children
+      )}
     </BaseComponent>
   );
 };
@@ -41,7 +45,7 @@ const ClickButton = props => {
   }, []);
   return (
     <Button
-      onClick={() => {
+      onClick={event => {
         console.log(props.stateName);
         setClicked(!clicked);
         StateHandler.update(
@@ -51,7 +55,7 @@ const ClickButton = props => {
         );
         console.log(clicked);
         try {
-          props.callback(!clicked);
+          props.callback(!clicked, event);
         } catch {}
       }}
       icon={clicked ? props.clickedIcon || props.icon : props.icon}
@@ -62,6 +66,7 @@ const ClickButton = props => {
           ? [props.baseClass, props.selectedColor].join(" ") || props.baseClass
           : props.baseClass
       }
+      children={props.children || ""}
     />
   );
 };

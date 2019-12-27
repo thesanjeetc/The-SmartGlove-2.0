@@ -165,3 +165,52 @@ iframe {
 .connText {
   color: #16cf77;
 }
+
+.x {
+  color: #1c2138;
+}
+
+.x:hover {
+  color: white;
+}
+
+/* width */
+.scroller::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+.scroller::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0.5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+.scroller::-webkit-scrollbar-thumb {
+  transition: ease 0.5s;
+
+  opacity: 0.2;
+  border-radius: 10px;
+}
+
+.scrollerDark::-webkit-scrollbar-thumb {
+  background: #171c30;
+}
+
+.scrollerLight::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+}
+
+/* Handle on hover */
+.scroller::-webkit-scrollbar-thumb:hover {
+  background: #5271ff;
+}
+
+.recordSelect {
+  background-color: #00a669;
+  color: white !important;
+}
+
+.sessionContainer {
+  height: 18rem;
+}
