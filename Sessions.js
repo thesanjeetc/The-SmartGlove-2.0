@@ -80,7 +80,7 @@ class Session {
   handleStreaming(stateValue) {
     stateValue ? this.startStream() : this.stopStream();
     if (this.currentState["gloveConnect"]) {
-      this.socket.to(this.glove).emit("streamState", newState);
+      this.socket.to(this.glove).emit("streamState", stateValue);
     }
   }
 
