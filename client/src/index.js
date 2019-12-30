@@ -6,6 +6,7 @@ import "./Styles/index.css";
 import "./Styles/tailwind.css";
 import GlobalState from "./Pages/Dashboard/Globals";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
+import * as serviceWorker from "./serviceWorker";
 
 if (localStorage.getItem("darkmode") === null) {
   localStorage.setItem("darkmode", "true");
@@ -27,3 +28,4 @@ const routing = (
 );
 
 ReactDOM.render(routing, document.getElementById("root"));
+serviceWorker.register();
