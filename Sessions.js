@@ -5,15 +5,14 @@ class Session {
     this.streamInterval = 20;
     this.numSensors = 12;
     this.dataStream;
-    this.recordings = {
-      abc: "Recording 1",
-      def: "Recording 2",
-      ghi: "Recording 3",
-      jkl: "Recording 4",
-      mno: "Recording 5"
-    };
     this.gloveData = [new Array(this.numSensors).fill(1)];
     this.lastData = new Array(this.numSensors).fill(1);
+    this.x = 0;
+
+    this.recordings = {};
+    this.newRecording = [];
+    this.currentRecording = [];
+    this.recordingPos = 0;
 
     this.currentState = {
       simulate: true,
@@ -22,11 +21,14 @@ class Session {
       recording: false,
       batteryLevel: "-",
       elapsedTime: "-",
-      recordings: this.recordings
+      recordings: this.recordings,
+      currentPlay: false
     };
 
     this.stateHandler = {
-      streaming: this.handleStreaming
+      streaming: this.handleStreaming,
+      recording: this.handleRecording,
+      currentPlay: this.handleRecordPlay
     };
 
     this.socket.on("connection", client => {
@@ -65,6 +67,7 @@ class Session {
 
   updateState(socket, stateName, stateValue, broadcast = false) {
     this.currentState[stateName] = stateValue;
+    // console.log(stateName, stateValue);
     this.handleStateChange(stateName, stateValue);
     broadcast
       ? socket.broadcast.emit("stateChange", stateName, stateValue)
@@ -81,6 +84,35 @@ class Session {
     stateValue ? this.startStream() : this.stopStream();
     if (this.currentState["gloveConnect"]) {
       this.socket.to(this.glove).emit("streamState", stateValue);
+    }
+  }
+
+  handleRecording(stateValue) {
+    if (stateValue) {
+      this.newRecording = [];
+      this.updateState(this.socket, "streaming", true);
+      this.updateState(this.socket, "currentPlay", false);
+    } else {
+      if (this.newRecording.length > 20) {
+        this.recordings[
+          Math.random()
+            .toString(36)
+            .substring(7)
+        ] = {
+          name: "Recording " + (Object.keys(this.recordings).length + 1),
+          data: this.newRecording
+        };
+        this.updateState(this.socket, "recordings", this.recordings);
+        this.updateState(this.socket, "currentPlay", false);
+      }
+    }
+  }
+
+  handleRecordPlay(stateValue) {
+    if (stateValue) {
+      this.currentRecording = this.recordings[stateValue]["data"];
+      this.recordingPos = 0;
+      this.updateState(this.socket, "streaming", true);
     }
   }
 
@@ -114,7 +146,13 @@ class Session {
 
   getData() {
     let data;
-    if (this.currentState["simulate"]) {
+    if (this.currentState["currentPlay"]) {
+      data = this.currentRecording[this.recordingPos];
+      this.recordingPos += 1;
+      if (this.recordingPos > this.currentRecording.length - 1) {
+        this.recordingPos = 0;
+      }
+    } else if (this.currentState["simulate"]) {
       data = this.simulateData();
     } else if (this.currentState["gloveConnect"]) {
       this.newData = this.gloveData.shift();
@@ -122,11 +160,14 @@ class Session {
     } else {
       data = new Array(this.numSensors).fill(1);
     }
+    if (this.currentState["recording"]) {
+      this.newRecording.push(data);
+    }
     return data;
   }
 
   startStream() {
-    this.x = 0;
+    this.stopStream();
     this.dataStream = setInterval(() => {
       this.socket.emit("stateChange", "sensorData", this.getData());
     }, this.streamInterval);

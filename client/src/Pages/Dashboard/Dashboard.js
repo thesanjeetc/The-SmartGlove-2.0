@@ -31,24 +31,26 @@ const SessionContainer = props => {
         dark="scrollerDark"
         light="scrollerLight"
       >
-        {Object.entries(recordings).map(([id, name]) => {
-          return (
-            <Recording
-              id={id}
-              name={name}
-              selected={currentPlay == id ? true : false}
-              callback={(id, selected) => {
-                if (selected) {
-                  setCurrent(id);
-                  StateHandler.update("currentPlay", id);
-                } else {
-                  setCurrent(false);
-                  StateHandler.update("currentPlay", false);
-                }
-              }}
-            />
-          );
-        })}
+        {Object.entries(recordings)
+          .map(([id, recording]) => {
+            return (
+              <Recording
+                id={id}
+                name={recording["name"]}
+                selected={currentPlay == id ? true : false}
+                callback={(id, selected) => {
+                  if (selected) {
+                    setCurrent(id);
+                    StateHandler.update("currentPlay", id);
+                  } else {
+                    setCurrent(false);
+                    StateHandler.update("currentPlay", false);
+                  }
+                }}
+              />
+            );
+          })
+          .reverse()}
       </BaseComponent>
     </div>
   );
