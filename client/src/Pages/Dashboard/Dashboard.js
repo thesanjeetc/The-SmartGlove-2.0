@@ -36,6 +36,7 @@ const SessionContainer = props => {
             return (
               <Recording
                 id={id}
+                key={id}
                 name={recording["name"]}
                 selected={currentPlay == id ? true : false}
                 callback={(id, selected) => {
@@ -70,6 +71,7 @@ const Recording = props => {
       }
       dark="text-white bg-dark-main"
       light="text-gray-600 bg-light-main"
+      key={props.id}
       onClick={event => {
         if (event.ctrlKey) {
           let newName = prompt("Name the Recording:");
