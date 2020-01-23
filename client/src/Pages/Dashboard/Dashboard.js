@@ -14,6 +14,7 @@ class Dashboard extends React.Component {
     this.state = {};
 
     let roomID = props.roomID === "bigbang" ? "" : props.roomID || "demo";
+    console.log("RoomID: " + roomID);
     joinRoom(roomID);
   }
 
