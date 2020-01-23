@@ -1,7 +1,6 @@
 var express = require("express");
 var url = require("url");
 var path = require("path");
-// var Pool = require("pg").Pool;
 var app = express();
 
 var server = require("http").Server(app);
@@ -17,6 +16,7 @@ app.get("*", (req, res) => {
 });
 
 let liveSessions = {};
+liveSessions[""] = new Session(io, "");
 
 io.on("connection", client => {
   let roomID = client.handshake.query["room"];
