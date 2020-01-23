@@ -1,31 +1,53 @@
 var io = require("socket.io-client");
 
-let local = true;
-var socket = io.connect(
-  local
-    ? "http://127.0.0.1:8000/glove"
-    : "https://thesmartglove.herokuapp.com/glove",
-  { reconnect: true }
-);
+class Glove {
+  constructor(roomID, local = false) {
+    this.roomID = roomID;
+    this.batteryLevel = 100;
+    this.timer = 0;
+    this.streamInterval = 10;
+    this.dataStream;
 
-// Add a connect listener
+    var socket = io.connect(
+      local
+        ? "http://127.0.0.1:80/" + roomID
+        : "https://thesmartglove.herokuapp.com/" + roomID,
+      { query: { room: roomID }, reconnect: true }
+    );
 
-const simulateData = client => {
-  let x = 0;
-  dataStream = setInterval(() => {
-    let data = [];
-    x = x + 0.06;
+    socket.on("connect", () => {
+      socket.emit("gloveConnect");
+      setInterval(() => {
+        socket.emit("batteryLevel", this.simulateBattery());
+      }, 800);
+    });
+
+    socket.on("streamState", state => {
+      if (state) {
+        this.dataStream = setInterval(() => {
+          socket.emit("sensorData", this.simulateData());
+        }, this.streamInterval);
+      } else {
+        clearInterval(this.dataStream);
+      }
+    });
+  }
+
+  simulateData() {
+    let sensorData = [];
+    this.timer += 0.04;
     for (var i = 0; i < 12; i++) {
-      data.push(Math.abs(100 * Math.sin(i * 0.4 + x)));
+      sensorData.push(Math.abs(100 * Math.sin(i * 0.55 + this.timer)));
     }
-    //console.log(data);
-    console.log(data);
-    client.emit("realData", data);
-  }, 20);
-};
+    return sensorData;
+  }
 
-socket.on("connect", function(data) {
-  socket.emit("batteryLevel", 21);
-  // socket.emit('gloveStream');
-  // simulateData(socket);
-});
+  simulateBattery() {
+    this.batteryLevel -= 0.1;
+    return Math.floor(this.batteryLevel);
+  }
+}
+
+var args = process.argv.slice(2);
+
+new Glove(args[0] || "", false);

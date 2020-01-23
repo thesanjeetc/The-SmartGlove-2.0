@@ -1,12 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tile, Container } from "./Base";
-import { Button, ClickButton } from "./Misc";
-import {
-  startStream,
-  stopStream,
-  onStateChange,
-  streamState
-} from "../Other/api";
+import { Button, ClickButton, ControlButton } from "./Misc";
+import { StateHandler } from "../Other/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdjust,
@@ -47,40 +42,46 @@ const GloveState = props => {
     <div className="w-full flex flex-wrap justify-center mt-4">
       <FontAwesomeIcon icon={props.icon} size="1x" />
       <p className="text-base font-mono inline ml-6 -mt-1">
-        {props.stateValue}
+        {props.stateValue + (props.stateValue == "-" ? "" : props.end || "")}
       </p>
     </div>
   );
 };
 
 const StatusContainer = props => {
-  const [status, setStatus] = useState(false, "-", "-");
+  const [status, setStatus] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState("-");
+  const [elapsedTime, setTime] = useState("-");
 
-  onStateChange((err, state) => {
-    setStatus(state);
-  });
+  useEffect(() => {
+    StateHandler.subscribe("gloveConnect", setStatus);
+    StateHandler.subscribe("batteryLevel", setBatteryLevel);
+    StateHandler.subscribe("elapsedTime", setTime);
+  }, []);
 
   return (
     <Tile className="">
       <div className="w-full">
-        <Indicator connected={status[0]} />
-        <GloveState icon={faBatteryThreeQuarters} stateValue={status[1]} />
-        <GloveState icon={faStopwatch} stateValue={status[1]} />
+        <Indicator connected={status} />
+        <GloveState
+          icon={faBatteryThreeQuarters}
+          stateValue={batteryLevel}
+          end="%"
+        />
+        <GloveState icon={faStopwatch} stateValue={elapsedTime} />
       </div>
       <div className="w-full flex flex-wrap self-end">
-        <ClickButton
+        <ControlButton
           icon={faPlay}
           clickedIcon={faPause}
           className="h-32 rounded-bl-lg"
-          handleClick={paused => (paused ? stopStream() : startStream())}
-          updateState={state => streamState(state)}
+          stateName="streaming"
         />
-        <ClickButton
+        <ControlButton
           icon={faCircle}
           clickedIcon={faStop}
           className="h-32 rounded-br-lg"
-          handleClick={clicked => console.log(clicked)}
-          // updateState={state => streamState(state)}
+          stateName="recording"
         />
       </div>
     </Tile>

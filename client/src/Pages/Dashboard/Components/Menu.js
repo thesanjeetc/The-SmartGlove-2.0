@@ -10,23 +10,13 @@ import {
   faBatteryThreeQuarters,
   faStopwatch,
   faPhoneAlt,
-  faVideo
+  faVideo,
+  faMobileAlt,
+  faQrcode
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
-
-const MenuButton = props => {
-  return (
-    <BaseComponent
-      onClick={props.onClick}
-      baseClass="menubutton bg-transparent w-24 h-24 inline flex"
-      {...props}
-    >
-      <div className="m-auto">
-        <FontAwesomeIcon icon={props.icon} />
-      </div>
-    </BaseComponent>
-  );
-};
+import { Button, MenuButton } from "./Misc";
+import { StateHandler } from "../Other/StateHandler";
 
 const MenuBar = props => {
   return (
@@ -38,19 +28,31 @@ const MenuBar = props => {
     >
       <div className="h-1/3 flex-1">
         <MenuButton icon={faHome} />
-        <MenuButton icon={faWaveSquare} />
+        <MenuButton
+          icon={faWaveSquare}
+          selectedColor="bg-main"
+          stateName="simulate"
+        />
         <MenuButton icon={faPhoneAlt} />
-        <MenuButton icon={faVideo} />
+        <MenuButton
+          icon={faQrcode}
+          stateName="overlay"
+          stateSync={false}
+          callback={state => {
+            StateHandler.update("overlay");
+          }}
+        />
       </div>
-      <MenuButton
-        icon={faAdjust}
-        className="self-end"
-        onClick={() => {
-          GlobalState.darkmode = !GlobalState.darkmode;
-          localStorage.setItem("darkmode", GlobalState.darkmode.toString());
-          props.pageRefresh();
-        }}
-      />
+      <div className="self-end">
+        <MenuButton
+          icon={faAdjust}
+          onClick={() => {
+            GlobalState.darkmode = !GlobalState.darkmode;
+            localStorage.setItem("darkmode", GlobalState.darkmode.toString());
+            props.pageRefresh();
+          }}
+        />
+      </div>
     </BaseComponent>
   );
 };

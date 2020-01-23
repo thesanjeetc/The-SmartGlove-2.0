@@ -1,6 +1,6 @@
 import React from "react";
 import Chart from "chart.js";
-import { readStream } from "../Other/api";
+import { StateHandler } from "../Other/api";
 import Config from "../ConfigFile";
 
 class LineChart extends React.Component {
@@ -9,7 +9,7 @@ class LineChart extends React.Component {
     this.canvasRef = React.createRef();
 
     this.state = {
-      newData: new Array(10).fill(-1)
+      newData: new Array(10).fill(1)
     };
 
     this.sensorData = new Array(Config.numSensors);
@@ -63,9 +63,9 @@ class LineChart extends React.Component {
   }
 
   componentDidMount() {
-    readStream((err, datapoints) =>
+    StateHandler.subscribe("sensorData", dataPoints =>
       this.setState({
-        newData: datapoints
+        newData: dataPoints
       })
     );
 

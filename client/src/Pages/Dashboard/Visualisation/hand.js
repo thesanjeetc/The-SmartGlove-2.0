@@ -2,13 +2,10 @@ import React, { Component } from "react";
 import ReactDOM from "react-dom";
 // import * as THREE from "three";
 import { fragshader, vertshader } from "../material.js";
-import { readStream } from "../Other/api";
+import { StateHandler } from "../Other/api";
 import Config from "../ConfigFile";
-// import FUCKINGWORK from "../fuckign_work.js"
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// import OBJLoader from "three-obj-loader"
-// OBJLoader(THREE);
 
 var THREE = require("three");
 var OBJLoader = require("three-obj-loader");
@@ -16,12 +13,11 @@ OBJLoader(THREE);
 
 class HandVis extends Component {
   constructor(props) {
-
     super(props);
     this.state = {
       newData: new Array(10).fill(0),
-      x : 0,
-      y : 0
+      x: 0,
+      y: 0
     };
 
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -109,7 +105,7 @@ class HandVis extends Component {
       uniforms: this.uniforms,
       vertexShader: vertshader,
       fragmentShader: fragshader
-    })
+    });
 
     // this.pressureMat = new THREE.MeshLambertMaterial({
     //   color: "#262d47",
@@ -122,15 +118,13 @@ class HandVis extends Component {
     window.addEventListener("keyup", this.onKeyDownUp, false);
   }
 
-
-
   onMouseMove(e) {
     // console.log("hi?")
-    this.setState({mouse : { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }});
-    console.log(this.state.mouse)
+    this.setState({
+      mouse: { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }
+    });
+    console.log(this.state.mouse);
   }
-
-
 
   resizeCanvasToDisplaySize() {
     const canvas = document.getElementById("visContainer");
@@ -172,7 +166,6 @@ class HandVis extends Component {
     this.scene.add(this.mesh);
   }
 
-
   animate = () => {
     this.resizeCanvasToDisplaySize();
     this.controls.update();
@@ -180,7 +173,6 @@ class HandVis extends Component {
     this.renderer.render(this.scene, this.camera);
     requestAnimationFrame(this.animate);
   };
-
 
   componentDidMount() {
     // Set up renderer and orbit camera controls
@@ -196,9 +188,9 @@ class HandVis extends Component {
     this.camera.position.set(1.25, 26, 0);
     this.controls.update();
 
-    readStream((err, datapoints) =>
+    StateHandler.subscribe("sensorData", dataPoints =>
       this.setState({
-        newData: datapoints
+        newData: dataPoints
       })
     );
 
@@ -276,18 +268,18 @@ class HandVis extends Component {
     // // this.mouse.x = (this.state.x / 640);
     // // this.mouse.y = (this.state.y / 520);
 
-    this.mouse.x = (this.state.mouse.x / this.renderer.getSize().x);
-    this.mouse.y = (this.state.mouse.y / this.renderer.getSize().y);
+    this.mouse.x = this.state.mouse.x / this.renderer.getSize().x;
+    this.mouse.y = this.state.mouse.y / this.renderer.getSize().y;
 
-    console.log("Mouse:")
-    console.log(this.mouse)
+    console.log("Mouse:");
+    console.log(this.mouse);
 
     // Calculate objects intersecting the picking ray
     this.raycaster.setFromCamera(this.mouse, this.camera);
     let ray = this.raycaster.intersectObjects(this.mesh.children);
-    console.log(this.raycaster.ray.at(1))
+    console.log(this.raycaster.ray.at(1));
     for (var i = 0; i < ray.length; i++) {
-      console.log("ijsbfjsbgdi")
+      console.log("ijsbfjsbgdi");
       console.log(this.sens_num, ray[i].uv);
       this.posarr[this.sens_num] = ray[i].uv;
       this.uniforms.positions.value = this.posarr;
@@ -319,7 +311,7 @@ class HandVis extends Component {
   // };
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.newData != nextState.newData;;
+    return this.state.newData != nextState.newData;
   }
 
   addCustomSceneObjects = () => {
@@ -365,7 +357,7 @@ class HandVis extends Component {
     const { x, y } = this.state;
     return (
       <div
-        onMouseMove = {this.onMouseMove}
+        onMouseMove={this.onMouseMove}
         className="w-full h-full"
         id="visContainer"
         ref={ref => (this.mount = ref)}
