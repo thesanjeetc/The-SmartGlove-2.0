@@ -10,7 +10,7 @@ class Glove {
 
     var socket = io.connect(
       local
-        ? "http://127.0.0.1:8000/" + roomID
+        ? "http://127.0.0.1:80/" + roomID
         : "https://thesmartglove.herokuapp.com/" + roomID,
       { query: { room: roomID }, reconnect: true }
     );
@@ -50,4 +50,4 @@ class Glove {
 
 var args = process.argv.slice(2);
 
-new Glove(args[0] || "demo", true);
+new Glove(args[0] || "", true);
