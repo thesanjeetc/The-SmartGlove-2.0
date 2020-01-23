@@ -1,14 +1,49 @@
+class Stream {
+  constructor(callback, interval) {
+    this.callback = callback;
+    this.interval = interval;
+    this.time;
+    this.stream;
+  }
+
+  start() {
+    this.stop();
+    this.stream = setInterval(() => {
+      this.time += this.interval;
+      this.callback(this.time);
+    }, this.interval);
+  }
+
+  stop() {
+    this.time = 0;
+    clearInterval(this.stream);
+  }
+}
+
+class Timer extends Stream {
+  constructor(callback) {
+    super(time => {
+      let currTime = this.format(time / 1000);
+      callback(currTime);
+    }, 1000);
+  }
+
+  format(time) {
+    let seconds = time % 60;
+    let minutes = Math.floor(time / 60);
+    let ss = (seconds < 10 ? "0" : "") + seconds;
+    let mm = (minutes < 10 ? "0" : "") + minutes;
+    return mm + ":" + ss;
+  }
+}
+
 const uid = () => {
   return Math.random()
     .toString(16)
     .substr(2, 8);
 };
 
-const simulateData = numSensors => {
-  let sensorData = [];
-  let time = new Date().getTime();
-  for (var i = 0; i < numSensors; i++) {
-    sensorData.push(Math.abs(100 * Math.sin(i * 0.2 + time)));
-  }
-  return sensorData;
+module.exports = {
+  Stream,
+  Timer
 };
