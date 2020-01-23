@@ -3,13 +3,10 @@ import { Container, Tile, BaseComponent } from "./Components/Base";
 import { MenuBar } from "./Components/Menu";
 import { Overlay, ClickButton } from "./Components/Misc";
 import { StatusContainer } from "./Components/Status";
-import { SessionContainer } from "./Components/Recording";
+import { Recordings } from "./Components/Recording";
 import { joinRoom } from "./Other/api";
 import BarChart from "./Graphs/BarChart";
 import LineChart from "./Graphs/LineChart";
-
-// Chart.defaults.global.defaultFontFamily = "Roboto, sans-serif";
-// https://github.com/chartjs/Chart.js/issues/2437#issuecomment-216530491
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -31,7 +28,7 @@ class Dashboard extends React.Component {
             </Container>
             <Container className="h-4/5 w-full pt-8">
               <Tile className="scroller p-3 ">
-                <SessionContainer />
+                <Recordings />
               </Tile>
             </Container>
           </Container>
