@@ -217,5 +217,13 @@ iframe {
 
 .loginForm {
   width: 31em;
-  height: 34em;
+  height: 35em;
+}
+
+.linkHover {
+  transition: 0.5s ease;
+}
+
+.linkHover:hover {
+  text-decoration: underline;
 }

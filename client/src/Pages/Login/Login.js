@@ -39,10 +39,15 @@ class Login extends React.Component {
                       type="password"
                     ></input>
                   </div>
-                  <div className="w-full flex my-12">
+                  <div className="w-full flex my-10">
                     <button className="controlButton px-24 bg-dark-main rounded-lg py-4 text-xl font-bold m-auto">
                       Login
                     </button>
+                  </div>
+                  <div className="w-full flex text-sm -my-4">
+                    <a href="/demo" className="m-auto linkHover">
+                      <p>Or try the demo.</p>
+                    </a>
                   </div>
                 </div>
               </div>
