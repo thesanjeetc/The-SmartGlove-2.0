@@ -10,6 +10,7 @@ import LineChart from "./Graphs/LineChart";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { StateHandler } from "./Other/api";
+import { HandVis } from "./Visualisation/hand";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -46,8 +47,10 @@ class Dashboard extends React.Component {
               </Tile>
             </Container>
           </Container>
-          <Container className="sm:flex hidden h-full lg:w-2/5 w-full p-4">
-            <Tile className="p-4"></Tile>
+          <Container className="h-full lg:w-2/5 w-full p-4">
+            <Tile className="p-4">
+              <HandVis />
+            </Tile>
           </Container>
         </Container>
         <Overlay />
