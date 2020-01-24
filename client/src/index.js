@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Dashboard from "./Pages/Dashboard/Dashboard";
-import Login from "./Pages/Dashboard/Login";
+import Login from "./Pages/Login/Login";
 import Landing from "./Pages/Landing/Landing";
 import "./Styles/index.css";
 import "./Styles/tailwind.css";
-import GlobalState from "./Pages/Dashboard/Globals";
+import GlobalState from "./Pages/Globals";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 import * as serviceWorker from "./serviceWorker";
 
