@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from "chart.js";
 import { StateHandler } from "../Other/api";
-import Config from "../ConfigFile";
+import Config from "../../ConfigFile";
 
 class LineChart extends React.Component {
   constructor(props) {

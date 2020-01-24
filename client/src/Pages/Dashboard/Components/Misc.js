@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { BaseComponent, Container, Tile } from "./Base";
+import { BaseComponent, Container, Tile } from "../../Components/Base";
 import { StateHandler } from "../Other/api";
 
 const Overlay = props => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Tile, BaseComponent } from "./Base";
+import { BaseComponent, Container, Tile } from "../../Components/Base";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { StateHandler } from "../Other/api";

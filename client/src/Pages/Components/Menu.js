@@ -15,8 +15,8 @@ import {
   faQrcode
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
-import { Button, MenuButton } from "./Misc";
-import { StateHandler } from "../Other/StateHandler";
+import { Button, MenuButton } from "../Dashboard/Components/Misc";
+import { StateHandler } from "../Dashboard/Other/StateHandler";
 
 const MenuBar = props => {
   return (

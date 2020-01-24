@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Container, Tile, BaseComponent } from "./Components/Base";
-import { MenuBar } from "./Components/Menu";
+import { BaseComponent, Container, Tile } from "../Components/Base";
+import { MenuBar } from "../Components/Menu";
 import { Overlay, ClickButton } from "./Components/Misc";
 import { StatusContainer } from "./Components/Status";
 import { Recordings } from "./Components/Recording";

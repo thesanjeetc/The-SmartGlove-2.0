@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import Config from "../ConfigFile";
+import Config from "../../ConfigFile";
 import { SyncStateHandler } from "./StateHandler";
 
 let dev = false;
