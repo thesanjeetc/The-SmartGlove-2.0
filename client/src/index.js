@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Dashboard from "./Pages/Dashboard/Dashboard";
+import Login from "./Pages/Dashboard/Login";
 import Landing from "./Pages/Landing/Landing";
 import "./Styles/index.css";
 import "./Styles/tailwind.css";
@@ -19,6 +20,7 @@ const routing = (
     <div>
       <Route path="/" exact component={Landing} />
       <Route path="/demo" component={Dashboard} />
+      <Route path="/login" component={Login} />
       <Route
         path="/room/:id"
         component={props => <Dashboard roomID={props.match.params.id} />}

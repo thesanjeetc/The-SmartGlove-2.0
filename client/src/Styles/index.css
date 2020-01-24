@@ -214,3 +214,8 @@ iframe {
 .sessionContainer {
   height: 18rem;
 }
+
+.loginForm {
+  width: 35em;
+  height: 30em;
+}
