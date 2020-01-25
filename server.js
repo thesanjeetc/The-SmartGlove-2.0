@@ -1,20 +1,43 @@
 var express = require("express");
-var url = require("url");
+const bodyParser = require("body-parser");
 var path = require("path");
-// var Pool = require("pg").Pool;
 var app = express();
 
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 var Session = require("./Sessions");
 
-server.listen(process.env.PORT || 80);
+const Pool = require("pg").Pool;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+
+const testFunc = (request, response) => {
+  pool.query("SELECT * FROM test", (error, results) => {
+    if (error) {
+      throw error;
+    }
+    response.status(200).json(results.rows);
+  });
+};
+
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
+
+app.get("/testing", testFunc);
 
 app.use(express.static(path.join(__dirname, "client/build")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
+
+server.listen(process.env.PORT || 80);
 
 let liveSessions = {};
 

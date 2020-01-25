@@ -22,6 +22,8 @@ client/.pnp.js
 /client/.env.test.local
 /client/.env.production.local
 
+.env
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
