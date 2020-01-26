@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
+    "devStart": "DATABASE_URL=$(heroku config:get DATABASE_URL -a thesmartglove) PORT=8000 nodemon server.js"
   },
   "keywords": [],
   "author": "",
