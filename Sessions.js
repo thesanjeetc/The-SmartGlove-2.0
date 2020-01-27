@@ -1,10 +1,11 @@
 var { Stream, Timer } = require("./utils");
 
+//server - 12, glove - 14
 class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
-    this.streamInterval = 14;
+    this.streamInterval = 15;
     this.numSensors = 12;
     this.gloveData = [new Array(this.numSensors).fill(1)];
     this.lastData = new Array(this.numSensors).fill(1);
@@ -145,8 +146,12 @@ class Session {
     } else if (this.currentState["simulate"]) {
       data = this.simulateData();
     } else if (this.currentState["gloveConnect"]) {
-      this.newData = this.gloveData.shift();
-      data = this.newData === undefined ? this.lastData : this.newData;
+      data = this.gloveData.shift();
+      if (data === undefined) {
+        data = this.lastData;
+      } else {
+        this.lastData = data;
+      }
     } else {
       data = new Array(this.numSensors).fill(1);
     }
