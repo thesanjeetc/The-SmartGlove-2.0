@@ -93,6 +93,7 @@ iframe {
 .controlButton {
   transition: 0.1s ease;
   padding: 0%;
+  outline: none;
 }
 
 .menubutton {
@@ -226,4 +227,11 @@ iframe {
 
 .linkHover:hover {
   text-decoration: underline;
+}
+
+button,
+input,
+canvas,
+a {
+  outline: none;
 }
