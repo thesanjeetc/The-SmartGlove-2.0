@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 // import * as THREE from "three";
-import { fragshader, vertshader } from "../material.js";
+import { fragshader, vertshader } from "../material.js.js";
 import { StateHandler } from "../Other/api";
 import Config from "../ConfigFile";
 
