@@ -235,3 +235,7 @@ canvas,
 a {
   outline: none;
 }
+
+.overlay {
+  background-color: rgba(26, 32, 44, 0.4);
+}

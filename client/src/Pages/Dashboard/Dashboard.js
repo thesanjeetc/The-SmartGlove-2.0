@@ -4,6 +4,7 @@ import { MenuBar } from "../Components/Menu";
 import { Overlay, ClickButton } from "./Components/Misc";
 import { StatusContainer } from "./Components/Status";
 import { Recordings } from "./Components/Recording";
+import { QRDialog } from "./Components/QRCode";
 import { joinRoom } from "./Other/api";
 import BarChart from "./Graphs/BarChart";
 import LineChart from "./Graphs/LineChart";
@@ -49,13 +50,13 @@ class Dashboard extends React.Component {
               </Tile>
             </Container>
           </Container>
-          <Container className="h-full lg:w-2/5 w-full p-4">
+          <Container className=" sm:flex hidden h-full lg:w-2/5 w-full p-4">
             <Tile className="p-4">
               <HandVis />
             </Tile>
           </Container>
         </Container>
-        <Overlay />
+        <QRDialog roomID={this.props.roomID} />
       </Container>
     );
   }

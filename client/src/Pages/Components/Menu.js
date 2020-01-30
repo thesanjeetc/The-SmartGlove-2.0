@@ -16,12 +16,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
 import { Button, MenuButton } from "../Dashboard/Components/Misc";
-import { StateHandler } from "../Dashboard/Other/StateHandler";
+import { StateHandler, EventHandler } from "../Dashboard/Other/api";
 
 const MenuBar = props => {
   return (
     <BaseComponent
-      baseClass="h-screen w-24 inline-flex flex-wrap bg-menu shadow-lg "
+      baseClass="sm:flex hidden h-screen w-24 inline-flex flex-wrap bg-menu shadow-lg "
       dark="bg-dark-menu"
       light="bg-light-menu"
       {...props}
@@ -35,11 +35,12 @@ const MenuBar = props => {
         />
         <MenuButton icon={faPhoneAlt} />
         <MenuButton
-          icon={faQrcode}
+          icon={faMobileAlt}
           stateName="overlay"
           stateSync={false}
           callback={state => {
-            StateHandler.update("overlay");
+            console.log("open");
+            EventHandler.update("overlay", state);
           }}
         />
       </div>

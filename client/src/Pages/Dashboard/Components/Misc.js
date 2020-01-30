@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "../../Components/Base";
-import { StateHandler } from "../Other/api";
+import { StateHandler, EventHandler } from "../Other/api";
+import { EventEmitter } from "../Other/StateHandler";
 
 const Overlay = props => {
   const [clicked, setClicked] = useState(false);
   useEffect(() => {
-    StateHandler.subscribe("overlay", setClicked);
+    EventHandler.subscribe("overlay", setClicked);
   }, []);
-  let baseClass = ["w-screen h-screen bg-gray-900 absolute z-50"];
+  let baseClass = ["w-screen overlay h-screen absolute z-50 flex"];
   return (
     <BaseComponent
-      baseClass={
-        clicked
-          ? [baseClass, "opacity-25"].join(" ")
-          : [baseClass, "opacity-0 hidden"].join(" ")
-      }
+      baseClass={clicked ? baseClass : [baseClass, "hidden"].join(" ")}
       onClick={() => {
         setClicked(!clicked);
-        StateHandler.update("overlay", !clicked);
+        EventHandler.update("overlay", !clicked);
       }}
-    />
+    >
+      {props.children}
+    </BaseComponent>
   );
 };
 
@@ -41,22 +40,24 @@ const Button = props => {
 const ClickButton = props => {
   const [clicked, setClicked] = useState(false);
   useEffect(() => {
-    StateHandler.subscribe(props.stateName, setClicked);
+    if (props.stateSync === undefined) {
+      StateHandler.subscribe(props.stateName, setClicked);
+    } else {
+      EventHandler.subscribe(props.stateName, setClicked);
+    }
   }, []);
   return (
     <Button
       onClick={event => {
-        console.log(props.stateName);
         setClicked(!clicked);
-        StateHandler.update(
-          props.stateName,
-          !clicked,
-          props.stateSync ? false : true
-        );
-        console.log(clicked);
-        try {
+        if (props.stateSync === undefined) {
+          StateHandler.update(props.stateName, !clicked);
+        } else {
+          EventHandler.update(props.stateName, !clicked);
+        }
+        if (props.callback) {
           props.callback(!clicked, event);
-        } catch {}
+        }
       }}
       icon={clicked ? props.clickedIcon || props.icon : props.icon}
       iconSize={props.iconSize}

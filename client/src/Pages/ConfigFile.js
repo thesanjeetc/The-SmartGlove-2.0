@@ -1,5 +1,4 @@
 let Config = {
-  streamInterval: 18,
   numSensors: 12,
   xLineTicks: 110,
   darkmode: true,
