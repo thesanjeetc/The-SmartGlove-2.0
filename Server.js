@@ -5,7 +5,7 @@ var app = express();
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 var Session = require("./Sessions");
-var routes = require("./routes");
+var routes = require("./Routes");
 
 app.use(bodyParser.json());
 app.use(

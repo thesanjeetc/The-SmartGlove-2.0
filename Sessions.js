@@ -1,4 +1,4 @@
-var { Stream, Timer } = require("./utils");
+var { Stream, Timer } = require("./Utils");
 
 class Session {
   constructor(socket, roomID) {

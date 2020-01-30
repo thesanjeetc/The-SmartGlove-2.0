@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon Server.js",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
-    "devStart": "DATABASE_URL=$(heroku config:get DATABASE_URL -a thesmartglove) PORT=8000 nodemon server.js"
+    "devStart": "DATABASE_URL=$(heroku config:get DATABASE_URL -a thesmartglove) PORT=8000 nodemon Server.js"
   },
   "keywords": [],
   "author": "",
