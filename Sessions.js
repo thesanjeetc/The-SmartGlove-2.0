@@ -5,7 +5,7 @@ class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
-    this.streamInterval = 15;
+    this.streamInterval = 20;
     this.numSensors = 12;
     this.gloveData = [new Array(this.numSensors).fill(1)];
     this.lastData = new Array(this.numSensors).fill(1);
@@ -49,6 +49,10 @@ class Session {
 
         client.on("stateChange", (state, newState) => {
           this.updateState(client, state, newState, true);
+        });
+
+        client.on("streamInterval", i => {
+          this.stream.streamInterval = i;
         });
       });
 
