@@ -21,7 +21,7 @@ class Session {
     );
 
     this.stream = new Stream(() => {
-      this.socket.emit("stateChange", "sensorData", this.getData());
+      this.updateState(this.socket, "sensorData", this.getData());
     }, this.streamInterval);
 
     this.currentState = {
@@ -43,6 +43,7 @@ class Session {
 
     this.socket.on("connection", client => {
       client.on("clientConnect", () => {
+        client.join("web");
         setTimeout(() => {
           client.emit("stateSync", this.currentState);
         }, 400);
@@ -84,8 +85,8 @@ class Session {
     // console.log(stateName, stateValue);
     this.handleStateChange(stateName, stateValue);
     broadcast
-      ? socket.broadcast.emit("stateChange", stateName, stateValue)
-      : socket.emit("stateChange", stateName, stateValue);
+      ? socket.to("web").broadcast.emit("stateChange", stateName, stateValue)
+      : socket.to("web").emit("stateChange", stateName, stateValue);
   }
 
   handleStateChange(state, value) {
