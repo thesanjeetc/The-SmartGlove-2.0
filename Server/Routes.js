@@ -7,8 +7,9 @@ router.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
 
-router.get("/testing", db.testFunc);
 router.post("/auth", db.authenticate);
 router.get("/clinics", db.getClinics);
+router.get("/client/:id", db.getClientDetails);
+router.get("/physio/:id", db.getPhysioDetails);
 
 module.exports = router;

@@ -1,7 +1,2 @@
-POST http://178.62.111.29:8000/auth HTTP/1.1
+GET http://157.245.45.155:8000/physio/1 HTTP/1.1
 content-type: application/json
-
-{
-    "username": "LukeSkywalker",
-    "password": "bigbang"
-}
