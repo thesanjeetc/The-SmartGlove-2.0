@@ -13,6 +13,31 @@ const testFunc = (request, response) => {
   });
 };
 
+const getClinics = (request, response) => {
+  pool.query('SELECT * FROM  "Clinic"', (error, results) => {
+    if (error) {
+      throw error;
+    }
+    response.status(200).json(results.rows);
+  });
+};
+
+const authenticate = (request, response) => {
+  const { username, password } = request.body;
+  pool.query(
+    'SELECT "userID" FROM "User" WHERE "Username" = $1 AND "Password" = MD5($2);',
+    [username, password],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
 module.exports = {
-  testFunc
+  testFunc,
+  authenticate,
+  getClinics
 };

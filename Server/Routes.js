@@ -8,5 +8,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/testing", db.testFunc);
+router.post("/auth", db.authenticate);
+router.get("/clinics", db.getClinics);
 
 module.exports = router;

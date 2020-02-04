@@ -1,5 +1,23 @@
 var { Stream, Timer } = require("./Utils");
 
+//server - 12, glove - 14
+
+class StateHandler {
+  constructor() {
+    this.callbacks = {};
+  }
+
+  subscribe(state, callback) {
+    this.callbacks[state] = callback;
+  }
+
+  update(state, newState) {
+    if (this.callbacks[state] !== undefined) {
+      this.callbacks[state](newState);
+    }
+  }
+}
+
 class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
@@ -20,7 +38,7 @@ class Session {
     );
 
     this.stream = new Stream(() => {
-      this.socket.emit("stateChange", "sensorData", this.getData());
+      this.updateState(this.socket, "sensorData", this.getData());
     }, this.streamInterval);
 
     this.currentState = {
@@ -42,12 +60,17 @@ class Session {
 
     this.socket.on("connection", client => {
       client.on("clientConnect", () => {
+        client.join("web");
         setTimeout(() => {
           client.emit("stateSync", this.currentState);
         }, 400);
 
         client.on("stateChange", (state, newState) => {
           this.updateState(client, state, newState, true);
+        });
+
+        client.on("streamInterval", i => {
+          this.stream.streamInterval = i;
         });
       });
 
@@ -79,8 +102,8 @@ class Session {
     // console.log(stateName, stateValue);
     this.handleStateChange(stateName, stateValue);
     broadcast
-      ? socket.broadcast.emit("stateChange", stateName, stateValue)
-      : socket.emit("stateChange", stateName, stateValue);
+      ? socket.to("web").broadcast.emit("stateChange", stateName, stateValue)
+      : socket.to("web").emit("stateChange", stateName, stateValue);
   }
 
   handleStateChange(state, value) {
@@ -145,8 +168,12 @@ class Session {
     } else if (this.currentState["simulate"]) {
       data = this.simulateData();
     } else if (this.currentState["gloveConnect"]) {
-      this.newData = this.gloveData.shift();
-      data = this.newData === undefined ? this.lastData : this.newData;
+      data = this.gloveData.shift();
+      if (data === undefined) {
+        data = this.lastData;
+      } else {
+        this.lastData = data;
+      }
     } else {
       data = new Array(this.numSensors).fill(1);
     }
