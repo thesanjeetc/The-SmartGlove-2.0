@@ -25,7 +25,7 @@ class Dashboard extends React.Component {
 
   render() {
     return (
-      <Container className="w-screen h-screen">
+      <Container className="w-screen h-screen overflow-hidden">
         <MenuBar pageRefresh={() => this.setState({ refresh: true })} />
         <Container className="h-full flex-1 p-3">
           <Container className="sm:w-2/5 md:w-1/5 h-full w-full h-full p-4">
