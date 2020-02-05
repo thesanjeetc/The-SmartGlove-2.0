@@ -1,2 +1,2 @@
-GET http://157.245.45.155:8000/physio/1 HTTP/1.1
+GET http://206.189.112.109:8000/physio/1/clients HTTP/1.1
 content-type: application/json

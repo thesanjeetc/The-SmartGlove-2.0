@@ -44,7 +44,29 @@ const getClientDetails = (request, response) => {
 const getPhysioDetails = (request, response) => {
   const userID = parseInt(request.params.id);
   pool.query(
-    'SELECT * FROM  "Physiotherapist" WHERE "userID" = $1',
+    'SELECT "Physiotherapist"."Forename", "Physiotherapist"."Surname", "Clinic"."Name", "Physiotherapist"."physioID" \
+	  FROM "Clinic" \
+	  INNER JOIN "Physiotherapist" \
+	  ON "Physiotherapist"."clinicID"= "Clinic"."clinicID" \
+	  WHERE "Physiotherapist"."userID" = $1;',
+    [userID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getPhysioClients = (request, response) => {
+  const userID = parseInt(request.params.id);
+  pool.query(
+    'SELECT "Client"."clientID", "Client"."Forename", "Client"."Surname", "Client"."DoB", "Client"."roomID" \
+	  FROM "Client" \
+	  INNER JOIN "Physiotherapist" \
+	  ON "Physiotherapist"."physioID"= "Client"."physioID" \
+	  WHERE "Physiotherapist"."userID" = $1;',
     [userID],
     (error, results) => {
       if (error) {
@@ -59,5 +81,6 @@ module.exports = {
   authenticate,
   getClinics,
   getClientDetails,
-  getPhysioDetails
+  getPhysioDetails,
+  getPhysioClients
 };
