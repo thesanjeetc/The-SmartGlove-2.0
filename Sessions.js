@@ -5,10 +5,11 @@ class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
-    this.streamInterval = 20;
+    this.streamInterval = 12;
     this.numSensors = 12;
-    this.gloveData = [new Array(this.numSensors).fill(1)];
-    this.lastData = new Array(this.numSensors).fill(1);
+    // this.gloveData = [new Array(this.numSensors).fill(1)];
+    // this.lastData = new Array(this.numSensors).fill(1);
+    this.sensorData;
     this.x = 0;
 
     this.recordings = {};
@@ -67,7 +68,8 @@ class Session {
         });
 
         client.on("sensorData", sensorData => {
-          this.gloveData.push(sensorData);
+          // this.gloveData.push(sensorData);
+          this.sensorData = sensorData;
         });
 
         client.on("disconnect", () => {
@@ -151,12 +153,13 @@ class Session {
     } else if (this.currentState["simulate"]) {
       data = this.simulateData();
     } else if (this.currentState["gloveConnect"]) {
-      data = this.gloveData.shift();
-      if (data === undefined) {
-        data = this.lastData;
-      } else {
-        this.lastData = data;
-      }
+      // data = this.gloveData.shift();
+      // if (data === undefined) {
+      //   data = this.lastData;
+      // } else {
+      //   this.lastData = data;
+      // }
+      data = this.sensorData;
     } else {
       data = new Array(this.numSensors).fill(1);
     }

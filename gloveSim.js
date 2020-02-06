@@ -5,7 +5,7 @@ class Glove {
     this.roomID = roomID;
     this.batteryLevel = 100;
     this.timer = 0;
-    this.streamInterval = 15;
+    this.streamInterval = 12;
     this.dataStream;
     this.realtimeTest = true;
 
@@ -25,7 +25,7 @@ class Glove {
 
     socket.on("connect", () => {
       socket.emit("gloveConnect");
-      // socket.emit("streamInterval", 30);
+      socket.emit("streamInterval", 14);
       setInterval(() => {
         socket.emit("batteryLevel", this.simulateBattery());
       }, 800);
@@ -71,4 +71,4 @@ class Glove {
 
 var args = process.argv.slice(2);
 
-new Glove(args[0] || "demo", false);
+new Glove(args[0] || "demo", true);
