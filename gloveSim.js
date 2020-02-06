@@ -11,10 +11,10 @@ class Glove {
 
     this.x = 0;
     setInterval(() => {
-      this.x += 5;
+      this.x += 1;
       this.x > 100 ? (this.x = 0) : (this.x = this.x);
       console.log(this.x);
-    }, 500);
+    }, 25);
 
     var socket = io.connect(
       local
@@ -25,7 +25,7 @@ class Glove {
 
     socket.on("connect", () => {
       socket.emit("gloveConnect");
-      socket.emit("streamInterval", 14);
+      // socket.emit("streamInterval", 14);
       setInterval(() => {
         socket.emit("batteryLevel", this.simulateBattery());
       }, 800);
@@ -71,4 +71,4 @@ class Glove {
 
 var args = process.argv.slice(2);
 
-new Glove(args[0] || "demo", true);
+new Glove(args[0] || "demo", false);
