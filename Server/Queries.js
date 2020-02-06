@@ -63,10 +63,56 @@ const createRecording = (request, response) => {
   const { sensorData, name, duration } = request.body;
   const sessionID = parseInt(request.params.sessionID);
   pool.query(
-    'INSERT INTO "Recording"( \
-	"sessionID", "timestamp", data, name, duration) \
-  VALUES ($1, CURRENT_TIMESTAMP, $2, $3 , $4)',
+    'INSERT INTO "Recording"("sessionID", "timestamp", data, name, duration) \
+    VALUES ($1, CURRENT_TIMESTAMP, $2, $3 , $4)',
     [sessionID, sensorData, name, duration],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const deleteRecording = (request, response) => {
+  const recordingID = parseInt(request.params.recordingID);
+  pool.query(
+    'DELETE FROM "Recording" WHERE "recordingID" = $1;',
+    [recordingID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const updateRecording = (request, response) => {
+  const recordingID = parseInt(request.params.recordingID);
+  const newName = request.query.name;
+  pool.query(
+    'UPDATE "Recording" \
+      SET "name" = $1 \
+      WHERE "recordingID" = $2;',
+    [recordingID, newName],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getRecording = (request, response) => {
+  const recordingID = parseInt(request.params.recordingID);
+  pool.query(
+    'SELECT "data" -> \'data\' AS sensorData \
+      FROM "Recording" \
+      WHERE "recordingID" = $1;',
+    [recordingID],
     (error, results) => {
       if (error) {
         throw error;
@@ -165,5 +211,8 @@ module.exports = {
   getClientSessions,
   getPhysioSessions,
   getPhysioClientSession,
-  createRecording
+  createRecording,
+  deleteRecording,
+  updateRecording,
+  getRecording
 };
