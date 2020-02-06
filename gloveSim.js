@@ -5,7 +5,7 @@ class Glove {
     this.roomID = roomID;
     this.batteryLevel = 100;
     this.timer = 0;
-    this.streamInterval = 12;
+    this.streamInterval = 25;
     this.dataStream;
     this.realtimeTest = true;
 
@@ -63,7 +63,7 @@ class Glove {
   realtime() {
     let sensorData = [];
     for (var i = 0; i < 12; i++) {
-      sensorData.push(this.x);
+      sensorData.push(this.x + i * 2);
     }
     return sensorData;
   }
@@ -71,4 +71,4 @@ class Glove {
 
 var args = process.argv.slice(2);
 
-new Glove(args[0] || "demo", false);
+new Glove(args[0] || "demo", true);
