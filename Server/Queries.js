@@ -60,13 +60,13 @@ const getClientSessions = (request, response) => {
 };
 
 const createRecording = (request, response) => {
-  const { data, name, duration } = request.body;
+  const { sensorData, name, duration } = request.body;
   const sessionID = parseInt(request.params.sessionID);
   pool.query(
     'INSERT INTO "Recording"( \
 	"sessionID", "timestamp", data, name, duration) \
   VALUES ($1, CURRENT_TIMESTAMP, $2, $3 , $4)',
-    [sessionID, data, name, duration],
+    [sessionID, sensorData, name, duration],
     (error, results) => {
       if (error) {
         throw error;

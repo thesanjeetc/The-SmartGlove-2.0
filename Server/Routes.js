@@ -17,7 +17,7 @@ router.get("/client/:clientID/sessions/:sessionID", db.getClientSessions);
 router.get("/client/:clientID/recordings", db.getClientSessions);
 router.get("/client/:clientID/recordings/:recordingID", db.getClientSessions);
 
-router.post("/client/:clientID/recordings/new", db.createRecording);
+router.post("/client/:sessionID/recordings/new", db.createRecording);
 
 router.get("/physio/:userID", db.getPhysioDetails);
 router.get("/physio/:physioID/clients", db.getPhysioClients);
