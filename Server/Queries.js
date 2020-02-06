@@ -41,6 +41,41 @@ const getClientDetails = (request, response) => {
   );
 };
 
+const getClientSessions = (request, response) => {
+  const clientID = parseInt(request.params.clientID);
+  pool.query(
+    'SELECT "Session"."sessionID", "Session"."Timestamp", "Session"."Duration" \
+	  FROM "Session" \
+	  INNER JOIN "Client" \
+	  ON "Session"."clientID"= "Client"."clientID" \
+	  WHERE "Client"."clientID" = $1;',
+    [clientID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const createRecording = (request, response) => {
+  const { data, name, duration } = request.body;
+  const sessionID = parseInt(request.params.sessionID);
+  pool.query(
+    'INSERT INTO "Recording"( \
+	"sessionID", "timestamp", data, name, duration) \
+  VALUES ($1, CURRENT_TIMESTAMP, $2, $3 , $4)',
+    [sessionID, data, name, duration],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
 const getPhysioDetails = (request, response) => {
   const userID = parseInt(request.params.id);
   pool.query(
@@ -60,14 +95,58 @@ const getPhysioDetails = (request, response) => {
 };
 
 const getPhysioClients = (request, response) => {
-  const userID = parseInt(request.params.id);
+  const physioID = parseInt(request.params.physioID);
   pool.query(
     'SELECT "Client"."clientID", "Client"."Forename", "Client"."Surname", "Client"."DoB", "Client"."roomID" \
 	  FROM "Client" \
 	  INNER JOIN "Physiotherapist" \
 	  ON "Physiotherapist"."physioID"= "Client"."physioID" \
-	  WHERE "Physiotherapist"."userID" = $1;',
-    [userID],
+	  WHERE "Physiotherapist"."physioID" = $1;',
+    [physioID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getPhysioSessions = (request, response) => {
+  const physioID = parseInt(request.params.physioID);
+  pool.query(
+    'SELECT "Session"."sessionID", "Session"."Timestamp", "Session"."Duration", "Client"."Forename", "Client"."Surname", "Client"."clientID" \
+	  FROM "Session" \
+	  INNER JOIN "Client" \
+	  ON "Session"."clientID"= "Client"."clientID" \
+	  INNER JOIN "Physiotherapist" \
+	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
+	  WHERE "Physiotherapist"."physioID" = $1 \
+	  ORDER BY "Session"."Timestamp" DESC;',
+    [physioID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getPhysioClientSession = (request, response) => {
+  const physioID = parseInt(request.params.physioID);
+  const clientID = parseInt(request.params.clientID);
+  pool.query(
+    'SELECT "Session"."sessionID", "Session"."Timestamp", "Session"."Duration", "Client"."Forename", "Client"."Surname" \
+	  FROM "Session" \
+	  INNER JOIN "Client" \
+	  ON "Session"."clientID"= "Client"."clientID" \
+	  INNER JOIN "Physiotherapist" \
+	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
+	  WHERE "Physiotherapist"."physioID" = $1 \
+	  AND "Client"."clientID" = $2 \
+	  ORDER BY "Session"."Timestamp" DESC;',
+    [physioID, clientID],
     (error, results) => {
       if (error) {
         throw error;
@@ -82,5 +161,9 @@ module.exports = {
   getClinics,
   getClientDetails,
   getPhysioDetails,
-  getPhysioClients
+  getPhysioClients,
+  getClientSessions,
+  getPhysioSessions,
+  getPhysioClientSession,
+  createRecording
 };
