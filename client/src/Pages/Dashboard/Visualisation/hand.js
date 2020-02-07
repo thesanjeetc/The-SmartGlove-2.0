@@ -85,7 +85,7 @@ class HandVis extends Component {
       // Glove Texture
       text: {
         type: "t",
-        value: THREE.ImageUtils.loadTexture("NewHand.png")
+        value: THREE.ImageUtils.loadTexture("/NewHand.png")
       },
 
       // Positions of sensors
