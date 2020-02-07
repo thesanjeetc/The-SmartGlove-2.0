@@ -44,11 +44,57 @@ const getClientDetails = (request, response) => {
 const getClientSessions = (request, response) => {
   const clientID = parseInt(request.params.clientID);
   pool.query(
-    'SELECT "Session"."sessionID", "Session"."Timestamp", "Session"."Duration" \
+    'SELECT "Session"."sessionID", "Session"."Timestamp", "Session"."Duration", "Physiotherapist"."Forename", "Physiotherapist"."Surname" \
 	  FROM "Session" \
 	  INNER JOIN "Client" \
 	  ON "Session"."clientID"= "Client"."clientID" \
-	  WHERE "Client"."clientID" = $1;',
+	  INNER JOIN "Physiotherapist" \
+	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
+	  WHERE "Client"."clientID" = $1 \
+	  ORDER BY "Session"."Timestamp" DESC;',
+    [clientID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getClientSessionRecordings = (request, response) => {
+  const clientID = parseInt(request.params.clientID);
+  pool.query(
+    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
+	  FROM "Recording" \
+	  INNER JOIN "Session" \
+	  ON "Recording"."sessionID"= "Session"."sessionID" \
+	  INNER JOIN "Client" \
+	  ON "Client"."clientID" = "Session"."clientID" \
+	  WHERE "Client"."clientID" = $1 \
+	  AND "Session"."sessionID" = $2 \
+	  ORDER BY "Recording"."timestamp" DESC;',
+    [clientID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getClientRecordings = (request, response) => {
+  const clientID = parseInt(request.params.clientID);
+  pool.query(
+    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
+	  FROM "Recording" \
+	  INNER JOIN "Session" \
+	  ON "Recording"."sessionID"= "Session"."sessionID" \
+	  INNER JOIN "Client" \
+	  ON "Client"."clientID" = "Session"."clientID" \
+	  WHERE "Client"."clientID" = $1 \
+	  ORDER BY "Recording"."timestamp" DESC;',
     [clientID],
     (error, results) => {
       if (error) {
@@ -202,6 +248,54 @@ const getPhysioClientSession = (request, response) => {
   );
 };
 
+const getPhysioRecordings = (request, response) => {
+  const physioID = parseInt(request.params.physioID);
+  pool.query(
+    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID", "Client"."Forename", "Client"."Surname", "Client"."clientID" \
+	  FROM "Recording" \
+	  INNER JOIN "Session" \
+	  ON "Recording"."sessionID"= "Session"."sessionID" \
+	  INNER JOIN "Client" \
+	  ON "Client"."clientID" = "Session"."clientID" \
+	  INNER JOIN "Physiotherapist" \
+	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
+	  WHERE "Physiotherapist"."physioID" = $1 \
+	  ORDER BY "Recording"."timestamp" DESC;',
+    [physioID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getPhysioClientRecordings = (request, response) => {
+  const physioID = parseInt(request.params.physioID);
+  const clientID = parseInt(request.params.clientID);
+  pool.query(
+    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
+	  FROM "Recording" \
+	  INNER JOIN "Session" \
+	  ON "Recording"."sessionID"= "Session"."sessionID" \
+	  INNER JOIN "Client" \
+	  ON "Client"."clientID" = "Session"."clientID" \
+	  INNER JOIN "Physiotherapist" \
+	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
+	  WHERE "Physiotherapist"."physioID" = $1 \
+	  AND "Client"."clientID" = $2 \
+	  ORDER BY "Recording"."timestamp" DESC;',
+    [physioID, clientID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
 module.exports = {
   authenticate,
   getClinics,
@@ -214,5 +308,8 @@ module.exports = {
   createRecording,
   deleteRecording,
   updateRecording,
-  getRecording
+  getRecording,
+  getPhysioRecordings,
+  getPhysioClientRecordings,
+  getClientRecordings
 };

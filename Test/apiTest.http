@@ -1,4 +1,4 @@
-POST http://142.93.39.100:8000/client/1/recordings/new HTTP/1.1
+POST http://142.93.38.78:8000/client/recordings/2/new HTTP/1.1
 content-type: application/json
 
 {
