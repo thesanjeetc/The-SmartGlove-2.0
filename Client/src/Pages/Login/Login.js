@@ -10,14 +10,73 @@ class Login extends React.Component {
     this.state = {};
 
     GlobalState.darkmode = true;
-    localStorage.setItem("darkmode", GlobalState.darkmode.toString());
+    localStorage.setItem("darkmode", GlobalState.darkmode);
+  }
+
+  checkLogin() {
+    if (this.state.loggedIn) {
+      let userType = this.state.userType;
+      let userID = this.state.userID;
+      fetch("http://localhost" + "/api/" + userType + "/" + userID, {
+        method: "get",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          this.props.history.push("/room/" + data[0].roomID);
+        })
+        .catch(error => {
+          this.setState({ incorrectLogin: true });
+        });
+    }
+  }
+
+  componentDidUpdate() {
+    this.checkLogin();
+  }
+
+  login(event) {
+    event.preventDefault();
+    fetch("http://localhost" + "/api/auth", {
+      method: "post",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: this.username.value,
+        password: this.password.value
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        GlobalState.store("userID", data[0].userID);
+        GlobalState.store("userType", data[0].UserType);
+        let userID = data[0].userID;
+        let userType = data[0].UserType ? "physio" : "client";
+        this.setState({
+          loggedIn: true,
+          userID: userID,
+          userType: userType
+        });
+      })
+      .catch(error => {
+        this.setState({
+          incorrectLogin: true
+        });
+      });
   }
 
   render() {
     return (
       <Container className="w-screen h-screen md:p-16 ">
         <Container className="loginForm m-auto">
-          <Tile className="w-full h-full">
+          <Tile className="w-full h-full ">
             <div className="m-auto h-full">
               <div>
                 <img src={logo} alt="Logo" className="h-16 my-16" />
@@ -27,7 +86,12 @@ class Login extends React.Component {
                     <input
                       type="text"
                       placeholder="Luke Skywalker"
-                      className="p-4 w-full rounded-lg -my-1 bg-dark-menu"
+                      className={
+                        this.state.incorrectLogin
+                          ? "p-4 w-full rounded-lg -my-1 bg-dark-menu border border-red-600"
+                          : "p-4 w-full rounded-lg -my-1 bg-dark-menu"
+                      }
+                      ref={username => (this.username = username)}
                     ></input>
                   </div>
                   <div className="my-6">
@@ -35,12 +99,20 @@ class Login extends React.Component {
                     <input
                       type="text"
                       placeholder="Nooooooooo..."
-                      className="p-4 w-full rounded-lg -my-1 bg-dark-menu"
+                      className={
+                        this.state.incorrectLogin
+                          ? "p-4 w-full rounded-lg -my-1 bg-dark-menu border border-red-600"
+                          : "p-4 w-full rounded-lg -my-1 bg-dark-menu"
+                      }
+                      ref={password => (this.password = password)}
                       type="password"
                     ></input>
                   </div>
                   <div className="w-full flex my-10">
-                    <button className="controlButton px-24 bg-dark-main rounded-lg py-4 text-xl font-bold m-auto">
+                    <button
+                      className="controlButton px-24 bg-dark-main rounded-lg py-4 text-xl font-bold m-auto"
+                      onClick={event => this.login(event)}
+                    >
                       Login
                     </button>
                   </div>

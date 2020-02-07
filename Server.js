@@ -4,13 +4,21 @@ var server = require("http").Server(app);
 var io = require("socket.io")(server);
 var Session = require("./Server/Sessions");
 var routes = require("./Server/Routes");
+var cors = require("cors");
 
-app.use(bodyParser.json());
+app.use(cors());
 app.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: false
   })
 );
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  next();
+});
+
 app.use("/", routes);
 server.listen(process.env.PORT || 80);
 

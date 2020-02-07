@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Login from "./Pages/Login/Login";
-import Login from "./Pages/Home/Home";
+import Home from "./Pages/Home/Home";
 import Landing from "./Pages/Landing/Landing";
 import "./Styles/index.css";
 import "./Styles/tailwind.css";
@@ -32,4 +32,4 @@ const routing = (
 );
 
 ReactDOM.render(routing, document.getElementById("root"));
-serviceWorker.register();
+// serviceWorker.register();

@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
-// import * as THREE from "three";
-import { fragshader, vertshader } from "../material.js.js";
+import { fragshader, vertshader } from "../material.js";
 import { StateHandler } from "../Other/api";
-import Config from "../ConfigFile";
+import Config from "../../ConfigFile";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -85,7 +83,7 @@ class HandVis extends Component {
       // Glove Texture
       text: {
         type: "t",
-        value: THREE.ImageUtils.loadTexture("NewHand.png")
+        value: THREE.ImageUtils.loadTexture("/NewHand.png")
       },
 
       // Positions of sensors

@@ -1,3 +1,4 @@
+const dotenv = require("dotenv").config();
 const Pool = require("pg").Pool;
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -22,13 +23,18 @@ const authenticate = (request, response) => {
       if (error) {
         throw error;
       }
-      response.status(200).json(results.rows);
+      if (results.rowCount == 0) {
+        response.status(401).send("Incorrect Login Details.");
+      } else {
+        response.status(200).json(results.rows);
+      }
     }
   );
 };
 
 const getClientDetails = (request, response) => {
-  const userID = parseInt(request.params.id);
+  const userID = parseInt(request.params.userID);
+  console.log(userID, request.params);
   pool.query(
     'SELECT * FROM  "Client" WHERE "userID" = $1',
     [userID],
@@ -64,6 +70,7 @@ const getClientSessions = (request, response) => {
 
 const getClientSessionRecordings = (request, response) => {
   const clientID = parseInt(request.params.clientID);
+  const sessionID = parseInt(request.params.sessionID);
   pool.query(
     'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
 	  FROM "Recording" \
@@ -74,7 +81,7 @@ const getClientSessionRecordings = (request, response) => {
 	  WHERE "Client"."clientID" = $1 \
 	  AND "Session"."sessionID" = $2 \
 	  ORDER BY "Recording"."timestamp" DESC;',
-    [clientID],
+    [clientID, sessionID],
     (error, results) => {
       if (error) {
         throw error;
@@ -159,6 +166,20 @@ const getRecording = (request, response) => {
       FROM "Recording" \
       WHERE "recordingID" = $1;',
     [recordingID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const deleteSession = (request, response) => {
+  const sessionID = parseInt(request.params.sessionID);
+  pool.query(
+    'DELETE FROM "Session" WHERE "sessionID" = $1;',
+    [sessionID],
     (error, results) => {
       if (error) {
         throw error;
@@ -300,16 +321,18 @@ module.exports = {
   authenticate,
   getClinics,
   getClientDetails,
+  getClientSessions,
+  getClientRecordings,
+  getClientSessionRecordings,
   getPhysioDetails,
   getPhysioClients,
-  getClientSessions,
   getPhysioSessions,
   getPhysioClientSession,
+  getPhysioRecordings,
+  getPhysioClientRecordings,
+  getRecording,
   createRecording,
   deleteRecording,
   updateRecording,
-  getRecording,
-  getPhysioRecordings,
-  getPhysioClientRecordings,
-  getClientRecordings
+  deleteSession
 };
