@@ -1,10 +1,14 @@
 var bodyParser = require("body-parser");
 var app = require("express")();
+var path = require("path");
 var server = require("http").Server(app);
 var io = require("socket.io")(server);
 var Session = require("./Server/Sessions");
 var routes = require("./Server/Routes");
 var cors = require("cors");
+var express = require("express");
+
+app.use(express.static(path.join(__dirname, "Client/build")));
 
 app.use(cors());
 app.use(
@@ -19,7 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", routes);
+app.use("/api", routes);
 server.listen(process.env.PORT || 80);
 
 let liveSessions = {};
