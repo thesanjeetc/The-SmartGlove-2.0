@@ -165,11 +165,13 @@ class HandVis extends Component {
   }
 
   animate = () => {
-    this.resizeCanvasToDisplaySize();
-    this.controls.update();
-    this.uniforms.data.value = this.state.newData;
-    this.renderer.render(this.scene, this.camera);
-    requestAnimationFrame(this.animate);
+    try {
+      this.resizeCanvasToDisplaySize();
+      this.controls.update();
+      this.uniforms.data.value = this.state.newData;
+      this.renderer.render(this.scene, this.camera);
+      requestAnimationFrame(this.animate);
+    } catch {}
   };
 
   componentDidMount() {
@@ -265,10 +267,10 @@ class HandVis extends Component {
 
     // // this.mouse.x = (this.state.x / 640);
     // // this.mouse.y = (this.state.y / 520);
-
-    this.mouse.x = this.state.mouse.x / this.renderer.getSize().x;
-    this.mouse.y = this.state.mouse.y / this.renderer.getSize().y;
-
+    try {
+      this.mouse.x = this.state.mouse.x / this.renderer.getSize().x;
+      this.mouse.y = this.state.mouse.y / this.renderer.getSize().y;
+    } catch {}
     console.log("Mouse:");
     console.log(this.mouse);
 

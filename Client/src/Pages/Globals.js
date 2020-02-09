@@ -13,7 +13,10 @@ let GlobalState = {
   },
   get(key) {
     let local = localStorage.getItem(key);
-    return local === undefined ? this.states[key] : local;
+    return local;
+  },
+  delete(key) {
+    localStorage.removeItem(key);
   }
 };
 

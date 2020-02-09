@@ -11,8 +11,11 @@ router.post("/api/auth", db.authenticate);
 router.get("/api/clinics", db.getClinics);
 
 router.get("/api/client/:userID", db.getClientDetails);
+router.get("/api/client/:clientID/room", db.getClientRoom);
 router.get("/api/client/:clientID/sessions", db.getClientSessions);
 router.get("/api/client/:clientID/sessions/:sessionID", db.getClientSessionRecordings);
+router.post("/api/client/sessions/new", db.createSession);
+router.put("/api/client/sessions/update", db.updateSession);
 
 router.get("/api/client/:clientID/recordings", db.getClientRecordings);
 router.get("/api/client/recordings/:recordingID", db.getRecording);

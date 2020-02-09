@@ -22,17 +22,23 @@ const SessionContainer = props => {
         light="scrollerLight"
       >
         {Object.entries(recordings)
-          .map(([id, recording]) => {
+          .map(([x, recording]) => {
+            console.log(recording);
             return (
               <Recording
-                id={id}
-                key={id}
-                name={recording["name"]}
-                selected={currentPlay == id ? true : false}
+                id={recording["recordingID"]}
+                key={recording["recordingID"]}
+                name={recording["Name"]}
+                selected={
+                  currentPlay == recording["recordingID"] ? true : false
+                }
                 callback={(id, selected) => {
                   if (selected) {
                     setCurrent(id);
-                    StateHandler.update("currentPlay", id);
+                    StateHandler.update(
+                      "currentPlay",
+                      recording["recordingID"]
+                    );
                   } else {
                     setCurrent(false);
                     StateHandler.update("currentPlay", false);
@@ -62,18 +68,25 @@ const Recording = props => {
       dark="text-white bg-dark-main"
       light="text-gray-600 bg-light-main"
       key={props.id}
-      onClick={event => {
-        if (event.ctrlKey) {
-          let newName = prompt("Name the Recording:");
-          // setName(newName);
-          StateHandler.update(props.id, newName);
-        } else {
-          setClicked(!clicked);
-          props.callback(props.id, !clicked);
-        }
-      }}
     >
-      <div className="font-mono bg-transparent h-full w-4/5 text-center text-md ">
+      <div
+        className="font-mono bg-transparent h-full w-4/5 text-center text-md "
+        onClick={event => {
+          if (event.ctrlKey) {
+            event.preventDefault();
+            let newName = prompt("Name the Recording:");
+            // setName(newName);
+            StateHandler.update("recordingsUpdate", {
+              id: props.id,
+              func: "rename",
+              name: newName
+            });
+          } else {
+            setClicked(!clicked);
+            props.callback(props.id, !clicked);
+          }
+        }}
+      >
         <p className="object-center my-6 py-1">
           {props.name.length > 17
             ? props.name.substring(0, 15) + "…"
@@ -83,9 +96,14 @@ const Recording = props => {
       <div className="bg-transparent h-full w-1/5 rounded-lg text-2xl">
         <div
           className="my-4 py-1 mx-2 "
-          onClick={() =>
-            window.confirm("Delete the recording '" + props.name + "'?")
-          }
+          onClick={() => {
+            if (window.confirm("Delete the recording '" + props.name + "'?")) {
+              StateHandler.update("recordingsUpdate", {
+                id: props.id,
+                func: "delete"
+              });
+            }
+          }}
         >
           <FontAwesomeIcon icon={faTimes} />
         </div>

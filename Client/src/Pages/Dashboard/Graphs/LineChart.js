@@ -31,10 +31,11 @@ class LineChart extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.state.newData != nextState.newData;
+    return this.state.newData != nextState.newData || this.state.newData;
   }
 
   componentDidUpdate() {
+    console.log(this.state.newData);
     this.updateSensorData();
     this.sensorData.map((sensor, i) => {
       this.myChart.data.datasets[i].data = sensor;

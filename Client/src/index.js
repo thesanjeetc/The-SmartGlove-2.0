@@ -9,6 +9,7 @@ import "./Styles/tailwind.css";
 import GlobalState from "./Pages/Globals";
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 import * as serviceWorker from "./serviceWorker";
+import { Redirect } from "react-router";
 
 if (localStorage.getItem("darkmode") === null) {
   localStorage.setItem("darkmode", "true");

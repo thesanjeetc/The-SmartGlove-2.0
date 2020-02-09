@@ -1,7 +1,2 @@
-POST http://localhost/auth HTTP/1.1
+GET http://localhost/api/client/3/sessions/1 HTTP/1.1
 content-type: application/json
-
-{	
-    "username": "LukeSkywalker",	
-    "password": "bigbang"	
-} 

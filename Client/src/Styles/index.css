@@ -235,3 +235,13 @@ canvas,
 a {
   outline: none;
 }
+
+table tr {
+  transition: 0.2s ease;
+}
+
+table .row:hover * {
+  background-color: #5271ff;
+  cursor: pointer;
+  color: white;
+}

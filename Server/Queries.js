@@ -1,9 +1,4 @@
-const dotenv = require("dotenv").config();
-const Pool = require("pg").Pool;
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-});
+var pool = require("./Database");
 
 const getClinics = (request, response) => {
   pool.query('SELECT * FROM  "Clinic"', (error, results) => {
@@ -47,6 +42,20 @@ const getClientDetails = (request, response) => {
   );
 };
 
+const getClientRoom = (request, response) => {
+  const clientID = parseInt(request.params.clientID);
+  pool.query(
+    'SELECT "roomID" FROM "Client" WHERE "Client"."clientID" = $1',
+    [clientID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
 const getClientSessions = (request, response) => {
   const clientID = parseInt(request.params.clientID);
   pool.query(
@@ -71,8 +80,9 @@ const getClientSessions = (request, response) => {
 const getClientSessionRecordings = (request, response) => {
   const clientID = parseInt(request.params.clientID);
   const sessionID = parseInt(request.params.sessionID);
+  // "Recording"."data",
   pool.query(
-    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
+    'SELECT "Recording"."Name", "Recording"."recordingID","Recording"."Timestamp" \
 	  FROM "Recording" \
 	  INNER JOIN "Session" \
 	  ON "Recording"."sessionID"= "Session"."sessionID" \
@@ -80,7 +90,7 @@ const getClientSessionRecordings = (request, response) => {
 	  ON "Client"."clientID" = "Session"."clientID" \
 	  WHERE "Client"."clientID" = $1 \
 	  AND "Session"."sessionID" = $2 \
-	  ORDER BY "Recording"."timestamp" DESC;',
+	  ORDER BY "Recording"."Timestamp" DESC;',
     [clientID, sessionID],
     (error, results) => {
       if (error) {
@@ -93,15 +103,16 @@ const getClientSessionRecordings = (request, response) => {
 
 const getClientRecordings = (request, response) => {
   const clientID = parseInt(request.params.clientID);
+  //"Recording"."data"
   pool.query(
-    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
+    'SELECT "Recording"."Name", "Recording"."Timestamp", "Recording"."recordingID" \
 	  FROM "Recording" \
 	  INNER JOIN "Session" \
 	  ON "Recording"."sessionID"= "Session"."sessionID" \
 	  INNER JOIN "Client" \
 	  ON "Client"."clientID" = "Session"."clientID" \
 	  WHERE "Client"."clientID" = $1 \
-	  ORDER BY "Recording"."timestamp" DESC;',
+	  ORDER BY "Recording"."Timestamp" DESC;',
     [clientID],
     (error, results) => {
       if (error) {
@@ -116,7 +127,7 @@ const createRecording = (request, response) => {
   const { sensorData, name, duration } = request.body;
   const sessionID = parseInt(request.params.sessionID);
   pool.query(
-    'INSERT INTO "Recording"("sessionID", "timestamp", data, name, duration) \
+    'INSERT INTO "Recording"("sessionID", "Timestamp", data, Name, Duration) \
     VALUES ($1, CURRENT_TIMESTAMP, $2, $3 , $4)',
     [sessionID, sensorData, name, duration],
     (error, results) => {
@@ -189,8 +200,40 @@ const deleteSession = (request, response) => {
   );
 };
 
+const createSession = (request, response) => {
+  const { sessionID, clientID } = request.body;
+  pool.query(
+    'INSERT INTO public."Session"("sessionID", "clientID", "Timestamp", "Duration") \
+	VALUES ($1, $2, CURRENT_TIMESTAMP, 0);',
+    [sessionID, clientID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const updateSession = (request, response) => {
+  const sessionID = parseInt(request.params.sessionID);
+  const duration = request.query.duration;
+  pool.query(
+    'UPDATE "Session" \
+      SET "Duration" = $1 \
+      WHERE "sessionID" = $2;',
+    [duration, sessionID],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
 const getPhysioDetails = (request, response) => {
-  const userID = parseInt(request.params.id);
+  const userID = parseInt(request.params.userID);
   pool.query(
     'SELECT "Physiotherapist"."Forename", "Physiotherapist"."Surname", "Clinic"."Name", "Physiotherapist"."physioID" \
 	  FROM "Clinic" \
@@ -271,8 +314,9 @@ const getPhysioClientSession = (request, response) => {
 
 const getPhysioRecordings = (request, response) => {
   const physioID = parseInt(request.params.physioID);
+  //"Recording"."data",
   pool.query(
-    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID", "Client"."Forename", "Client"."Surname", "Client"."clientID" \
+    'SELECT "Recording"."Name", "Client"."Forename", "Client"."Surname","Recording"."recordingID","Recording"."Timestamp", "Recording"."sessionID",  "Client"."clientID" \
 	  FROM "Recording" \
 	  INNER JOIN "Session" \
 	  ON "Recording"."sessionID"= "Session"."sessionID" \
@@ -281,7 +325,7 @@ const getPhysioRecordings = (request, response) => {
 	  INNER JOIN "Physiotherapist" \
 	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
 	  WHERE "Physiotherapist"."physioID" = $1 \
-	  ORDER BY "Recording"."timestamp" DESC;',
+	  ORDER BY "Recording"."Timestamp" DESC;',
     [physioID],
     (error, results) => {
       if (error) {
@@ -296,7 +340,7 @@ const getPhysioClientRecordings = (request, response) => {
   const physioID = parseInt(request.params.physioID);
   const clientID = parseInt(request.params.clientID);
   pool.query(
-    'SELECT "Recording"."recordingID","Recording"."timestamp","Recording"."name","Recording"."data", "Recording"."sessionID" \
+    'SELECT "Recording"."Name","Recording"."recordingID","Recording"."Timestamp","Recording"."data", "Recording"."sessionID" \
 	  FROM "Recording" \
 	  INNER JOIN "Session" \
 	  ON "Recording"."sessionID"= "Session"."sessionID" \
@@ -306,7 +350,7 @@ const getPhysioClientRecordings = (request, response) => {
 	  ON "Client"."physioID" = "Physiotherapist"."physioID" \
 	  WHERE "Physiotherapist"."physioID" = $1 \
 	  AND "Client"."clientID" = $2 \
-	  ORDER BY "Recording"."timestamp" DESC;',
+	  ORDER BY "Recording"."Timestamp" DESC;',
     [physioID, clientID],
     (error, results) => {
       if (error) {
@@ -334,5 +378,8 @@ module.exports = {
   createRecording,
   deleteRecording,
   updateRecording,
-  deleteSession
+  deleteSession,
+  createSession,
+  updateSession,
+  getClientRoom
 };

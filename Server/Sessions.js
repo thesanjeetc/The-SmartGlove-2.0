@@ -1,4 +1,5 @@
 var { Stream, Timer } = require("./Utils");
+var db = require("./InternalQueries");
 
 //server - 12, glove - 14
 
@@ -22,13 +23,14 @@ class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
+    this.sessionID = Math.floor(Math.random() * 1000000);
     this.streamInterval = 20;
     this.numSensors = 12;
     this.gloveData = [new Array(this.numSensors).fill(1)];
     this.lastData = new Array(this.numSensors).fill(1);
     this.x = 0;
 
-    this.recordings = {};
+    this.recordings = [];
     this.newRecording = [];
     this.currentRecording = [];
     this.recordingPos = 0;
@@ -55,7 +57,8 @@ class Session {
     this.stateHandler = {
       streaming: this.handleStreaming,
       recording: this.handleRecording,
-      currentPlay: this.handleRecordPlay
+      currentPlay: this.handleRecordPlay,
+      recordingsUpdate: this.handleRecordingUpdate
     };
 
     this.socket.on("connection", client => {
@@ -69,8 +72,14 @@ class Session {
           this.updateState(client, state, newState, true);
         });
 
-        client.on("streamInterval", i => {
-          this.stream.streamInterval = i;
+        client.on("patientConnect", clientID => {
+          this.clientID = clientID;
+          db.createSession(this.sessionID, this.clientID);
+          db.getClientRecordings(this.clientID, recordings => {
+            console.log(recordings);
+            this.recordings = recordings;
+            this.updateState(this.socket, "recordings", recordings);
+          });
         });
       });
 
@@ -119,6 +128,19 @@ class Session {
     }
   }
 
+  handleRecordingUpdate(stateValue) {
+    console.log(stateValue);
+    if (stateValue.func == "rename") {
+      db.updateRecording(stateValue.id, stateValue.name);
+    } else {
+      db.deleteRecording(stateValue.id);
+    }
+    db.getClientRecordings(this.clientID, recordings => {
+      this.recordings = recordings;
+      this.updateState(this.socket, "recordings", this.recordings);
+    });
+  }
+
   handleRecording(stateValue) {
     if (stateValue) {
       this.newRecording = [];
@@ -126,25 +148,34 @@ class Session {
       this.updateState(this.socket, "currentPlay", false);
     } else {
       if (this.newRecording.length > 20) {
-        this.recordings[
-          Math.random()
-            .toString(36)
-            .substring(7)
-        ] = {
-          name: "Recording " + (Object.keys(this.recordings).length + 1),
-          data: this.newRecording
+        let name = "Recording " + (Object.keys(this.recordings).length + 1);
+        console.log(name);
+        //prettier-ignore
+        db.createRecording(name, { data: this.newRecording }, this.sessionID, (recordingID) => {
+          this.newRecordingID = recordingID;
+          
+        let recording = {
+          Name: name,
+          recordingID: this.newRecordingID
         };
+        console.log(recording);
+        this.recordings.push(recording);
         this.updateState(this.socket, "recordings", this.recordings);
         this.updateState(this.socket, "currentPlay", false);
+        });
       }
     }
   }
 
   handleRecordPlay(stateValue) {
     if (stateValue) {
-      this.currentRecording = this.recordings[stateValue]["data"];
-      this.recordingPos = 0;
-      this.updateState(this.socket, "streaming", true);
+      db.getRecording(stateValue, data => {
+        console.log(stateValue);
+        this.currentRecording = data;
+        // console.log(stateValue, data);
+        this.recordingPos = 0;
+        this.updateState(this.socket, "streaming", true);
+      });
     }
   }
 
@@ -152,7 +183,7 @@ class Session {
     let sensorData = [];
     this.x += 0.06;
     for (var i = 0; i < this.numSensors; i++) {
-      sensorData.push(Math.abs(100 * Math.sin(i * 0.2 + this.x)));
+      sensorData.push(Math.abs(100 * Math.sin(i * 0.2 + this.x)).toFixed(3));
     }
     return sensorData;
   }
@@ -180,6 +211,7 @@ class Session {
     if (this.currentState["recording"]) {
       this.newRecording.push(data);
     }
+    // console.log(data);
     return data;
   }
 }

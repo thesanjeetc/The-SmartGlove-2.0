@@ -8,14 +8,14 @@ let address = (dev ? devIP : window.location.hostname) + "/";
 
 let StateHandler;
 
-const joinRoom = roomID => {
+const joinRoom = (roomID, id) => {
   let socket = io.connect(address + roomID, {
     query: { room: roomID },
     reconnect: true
   });
-
   socket.on("connect", () => {
     socket.emit("clientConnect");
+    if (id !== undefined) socket.emit("patientConnect", id);
   });
 
   StateHandler = new SyncStateHandler(socket);

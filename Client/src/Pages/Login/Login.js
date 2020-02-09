@@ -17,17 +17,26 @@ class Login extends React.Component {
     if (this.state.loggedIn) {
       let userType = this.state.userType;
       let userID = this.state.userID;
-      fetch("http://localhost" + "/api/" + userType + "/" + userID, {
-        method: "get",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json"
+      fetch(
+        "http://" +
+          window.location.hostname +
+          "/api/" +
+          userType +
+          "/" +
+          userID,
+        {
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
         }
-      })
+      )
         .then(response => response.json())
         .then(data => {
           console.log(data);
-          this.props.history.push("/room/" + data[0].roomID);
+          GlobalState.store("userDetails", JSON.stringify(data[0]));
+          this.props.history.push("/home");
         })
         .catch(error => {
           this.setState({ incorrectLogin: true });
@@ -41,7 +50,7 @@ class Login extends React.Component {
 
   login(event) {
     event.preventDefault();
-    fetch("http://localhost" + "/api/auth", {
+    fetch("http://" + window.location.hostname + "/api/auth", {
       method: "post",
       headers: {
         Accept: "application/json",
