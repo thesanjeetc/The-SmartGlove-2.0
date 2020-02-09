@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BaseComponent, Container, Tile } from "../../Components/Base";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { StateHandler } from "../Other/api";
+import { StateHandler, EventHandler } from "../Other/api";
 
 const SessionContainer = props => {
   const [currentPlay, setCurrent] = useState(false);
@@ -74,8 +74,8 @@ const Recording = props => {
         onClick={event => {
           if (event.ctrlKey) {
             event.preventDefault();
+            StateHandler.update("streaming", false, true);
             let newName = prompt("Name the Recording:");
-            // setName(newName);
             StateHandler.update("recordingsUpdate", {
               id: props.id,
               func: "rename",
@@ -97,6 +97,7 @@ const Recording = props => {
         <div
           className="my-4 py-1 mx-2 "
           onClick={() => {
+            StateHandler.update("streaming", false, true);
             if (window.confirm("Delete the recording '" + props.name + "'?")) {
               StateHandler.update("recordingsUpdate", {
                 id: props.id,

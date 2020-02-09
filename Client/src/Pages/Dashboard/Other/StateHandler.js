@@ -1,6 +1,5 @@
-class StateHandler {
+class EventEmitter {
   constructor() {
-    this.currentState = {};
     this.stateCallbacks = {};
   }
 
@@ -12,9 +11,8 @@ class StateHandler {
   }
 
   update(state, value) {
-    console.log("[LOCAL] State Update: " + state);
+    console.log("Event Emitted: ", state, value);
     if (this.stateCallbacks[state] !== undefined) {
-      this.currentState[state] = value;
       this.stateCallbacks[state].forEach((callback, index) => {
         callback(value);
       });
@@ -22,10 +20,11 @@ class StateHandler {
   }
 }
 
-class SyncStateHandler extends StateHandler {
+class SyncStateHandler extends EventEmitter {
   constructor(socket) {
     super();
     this.socket = socket;
+    this.currentState = {};
     this.setup();
   }
 
@@ -35,6 +34,8 @@ class SyncStateHandler extends StateHandler {
     });
 
     this.socket.on("stateChange", (state, value) => {
+      console.log("[REMOTE] State Update: " + state);
+      this.currentState[state] = value;
       super.update(state, value);
     });
   }
@@ -46,14 +47,15 @@ class SyncStateHandler extends StateHandler {
     });
   }
 
-  update(state, value, sync = true) {
+  update(state, value, localSync = false) {
     console.log("[LOCAL] State Update: " + state);
-    console.log(sync);
     this.currentState[state] = value;
-    sync
-      ? this.socket.emit("stateChange", state, value)
-      : super.update(state, value);
+    this.socket.emit("stateChange", state, value);
+    if (localSync) {
+      super.update(state, value);
+      console.log("hhiiiiiiiiiii");
+    }
   }
 }
 
-export { StateHandler, SyncStateHandler };
+export { EventEmitter, SyncStateHandler };

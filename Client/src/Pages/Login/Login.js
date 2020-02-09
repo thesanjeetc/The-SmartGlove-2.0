@@ -126,9 +126,16 @@ class Login extends React.Component {
                     </button>
                   </div>
                   <div className="w-full flex text-sm -my-4">
-                    <a href="/demo" className="m-auto linkHover">
-                      <p>Or try the demo.</p>
-                    </a>
+                    <p
+                      className="m-auto linkHover cursor-pointer"
+                      onClick={event => {
+                        this.username.value = "demo";
+                        this.password.value = "demo";
+                        this.login(event);
+                      }}
+                    >
+                      Or try the demo.
+                    </p>
                   </div>
                 </div>
               </div>

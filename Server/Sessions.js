@@ -24,10 +24,9 @@ class Session {
     this.roomID = roomID;
     this.socket = socket;
     this.sessionID = Math.floor(Math.random() * 1000000);
-    this.streamInterval = 20;
+    this.streamInterval = 25;
     this.numSensors = 12;
-    this.gloveData = [new Array(this.numSensors).fill(1)];
-    this.lastData = new Array(this.numSensors).fill(1);
+    this.sensorData;
     this.x = 0;
 
     this.recordings = [];
@@ -93,7 +92,7 @@ class Session {
         });
 
         client.on("sensorData", sensorData => {
-          this.gloveData.push(sensorData);
+          this.sensorData = sensorData;
         });
 
         client.on("disconnect", () => {
@@ -134,6 +133,9 @@ class Session {
       db.updateRecording(stateValue.id, stateValue.name);
     } else {
       db.deleteRecording(stateValue.id);
+      if ((this.currentState["currentPlay"] = stateValue.id)) {
+        this.updateState(this.socket, "currentPlay", false);
+      }
     }
     db.getClientRecordings(this.clientID, recordings => {
       this.recordings = recordings;
@@ -199,12 +201,7 @@ class Session {
     } else if (this.currentState["simulate"]) {
       data = this.simulateData();
     } else if (this.currentState["gloveConnect"]) {
-      data = this.gloveData.shift();
-      if (data === undefined) {
-        data = this.lastData;
-      } else {
-        this.lastData = data;
-      }
+      data = this.sensorData;
     } else {
       data = new Array(this.numSensors).fill(1);
     }

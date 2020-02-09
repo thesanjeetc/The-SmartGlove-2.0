@@ -188,11 +188,13 @@ class HandVis extends Component {
     this.camera.position.set(1.25, 26, 0);
     this.controls.update();
 
-    StateHandler.subscribe("sensorData", dataPoints =>
-      this.setState({
-        newData: dataPoints
-      })
-    );
+    StateHandler.subscribe("sensorData", dataPoints => {
+      if (dataPoints !== null) {
+        this.setState({
+          newData: dataPoints
+        });
+      }
+    });
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
 

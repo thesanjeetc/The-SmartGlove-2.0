@@ -35,7 +35,6 @@ class LineChart extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state.newData);
     this.updateSensorData();
     this.sensorData.map((sensor, i) => {
       this.myChart.data.datasets[i].data = sensor;
@@ -64,11 +63,13 @@ class LineChart extends React.Component {
   }
 
   componentDidMount() {
-    StateHandler.subscribe("sensorData", dataPoints =>
-      this.setState({
-        newData: dataPoints
-      })
-    );
+    StateHandler.subscribe("sensorData", dataPoints => {
+      if (dataPoints !== null) {
+        this.setState({
+          newData: dataPoints
+        });
+      }
+    });
 
     this.myChart = new Chart(this.canvasRef.current, {
       type: "line",

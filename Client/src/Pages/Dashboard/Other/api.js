@@ -1,12 +1,13 @@
 import io from "socket.io-client";
 import Config from "../../ConfigFile";
-import { SyncStateHandler } from "./StateHandler";
+import { EventEmitter, SyncStateHandler } from "./StateHandler";
 
 let dev = false;
 let devIP = "159.65.92.200";
 let address = (dev ? devIP : window.location.hostname) + "/";
 
 let StateHandler;
+let EventHandler = new EventEmitter();
 
 const joinRoom = (roomID, id) => {
   let socket = io.connect(address + roomID, {
@@ -21,4 +22,4 @@ const joinRoom = (roomID, id) => {
   StateHandler = new SyncStateHandler(socket);
 };
 
-export { StateHandler, joinRoom };
+export { StateHandler, EventHandler, joinRoom };

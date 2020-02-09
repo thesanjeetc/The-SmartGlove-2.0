@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { BaseComponent, Container, Tile } from "../Components/Base";
-import { MenuBar } from "../Components/Menu";
+import MenuBar from "../Components/Menu";
 import { joinRoom, StateHandler } from "../Dashboard/Other/api";
 import GlobalState from "../Globals";
 import { Redirect } from "react-router";
 import { withRouter } from "react-router-dom";
+import moment from "moment";
 
 const Row = props => {
   return (
@@ -60,6 +61,9 @@ const Table = props => {
       let row = [];
       Object.entries(element).forEach(([key, value], j) => {
         if (key.includes("ID")) return;
+        if (key == "Timestamp") {
+          value = moment(value).format("MM/DD/YYYY h:mm A");
+        }
         row.push(<Column key={j}>{value}</Column>);
       });
       tableData.push(
@@ -99,28 +103,70 @@ const ViewButton = props => {
   );
 };
 
+const Search = props => {
+  useEffect(() => {
+    props.callback(props.data);
+  }, [props.data]);
+  return (
+    <BaseComponent
+      className="w-full rounded-lg"
+      dark="bg-dark-menu"
+      light="bg-light-menu"
+    >
+      <input
+        className="w-full h-20 bg-transparent rounded-lg px-4 text-lg font-mono"
+        placeholder="Search"
+        onChange={event => {
+          let searchInput = event.target.value.toLowerCase();
+          let displayData = [];
+          if (searchInput == "") {
+            displayData = props.data;
+          } else {
+            props.data.forEach(element => {
+              for (let [key, value] of Object.entries(element)) {
+                let val = value.toString().toLowerCase();
+                if (val.includes(searchInput)) {
+                  displayData.push(element);
+                  break;
+                }
+              }
+            });
+          }
+          props.callback(displayData);
+        }}
+      ></input>
+    </BaseComponent>
+  );
+};
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
-    let userDetails = JSON.parse(GlobalState.get("userDetails"));
-    console.log(GlobalState.get("userType"));
-    console.log(userDetails);
-    this.state = {
-      index: -1,
-      physioID: userDetails.physioID,
-      clientID: userDetails.clientID,
-      sessionID: NaN,
-      userType: GlobalState.get("userType") == "true",
-      error: false
-    };
+    if (GlobalState.get("userID") == undefined) {
+      this.props.history.push("/login");
+      this.loggedOut = true;
+    } else {
+      let userDetails = JSON.parse(GlobalState.get("userDetails"));
+      console.log(GlobalState.get("userType"));
+      console.log(userDetails);
+      this.state = {
+        index: -1,
+        name: [userDetails.Forename, userDetails.Surname].join(" "),
+        physioID: userDetails.physioID,
+        clientID: userDetails.clientID,
+        sessionID: NaN,
+        userType: GlobalState.get("userType") == "true",
+        error: false
+      };
 
-    this.state.path = this.state.userType ? "physioSessions" : "clientSessions";
+      this.state.path = this.state.userType
+        ? "physioSessions"
+        : "clientSessions";
+      this.updateLinks();
 
-    this.updateLinks();
-  }
-
-  componentDidMount() {
-    this.nextRoute();
+      this.nextRoute();
+      this.state.displayData = this.state.data;
+    }
   }
 
   nextRoute() {
@@ -224,9 +270,7 @@ class Home extends React.Component {
   }
 
   render() {
-    if (GlobalState.get("userID") == undefined) {
-      return <Redirect to="/login" />;
-    } else {
+    if (!this.loggedOut) {
       return (
         <Container className="w-screen h-screen">
           <MenuBar
@@ -236,41 +280,53 @@ class Home extends React.Component {
           <Container className="flex-grow h-full py-6 px-3">
             <Container className="w-1/4 h-full px-3">
               <Tile className="flex">
-                <div className="w-full p-4">
-                  <ViewButton
-                    name={"My Sessions"}
-                    onClick={() => {
-                      this.newView(
-                        this.state.userType
-                          ? "physioSessions"
-                          : "clientSessions"
-                      );
+                <div className="w-full p-5">
+                  <div className="font-mono text-2xl font-hairline text-center py-12">
+                    <p>Hey there,</p>
+                    <p className="nameColor">{this.state.name}.</p>
+                  </div>
+                  <Search
+                    data={this.state.data}
+                    callback={displayData => {
+                      this.setState({ displayData: displayData });
                     }}
                   />
-                  <ViewButton
-                    name={"My Clients"}
-                    display={!this.state.userType}
-                    onClick={() => {
-                      this.newView("physioClients");
-                    }}
-                  />
-                  <ViewButton
-                    name={"My Recordings"}
-                    onClick={() => {
-                      this.newView(
-                        this.state.userType
-                          ? "physioRecordings"
-                          : "clientRecordings"
-                      );
-                    }}
-                  />
+                  <div className="my-12 w-full ">
+                    <ViewButton
+                      name={"My Sessions"}
+                      onClick={() => {
+                        this.newView(
+                          this.state.userType
+                            ? "physioSessions"
+                            : "clientSessions"
+                        );
+                      }}
+                    />
+                    <ViewButton
+                      name={"My Clients"}
+                      display={!this.state.userType}
+                      onClick={() => {
+                        this.newView("physioClients");
+                      }}
+                    />
+                    <ViewButton
+                      name={"My Recordings"}
+                      onClick={() => {
+                        this.newView(
+                          this.state.userType
+                            ? "physioRecordings"
+                            : "clientRecordings"
+                        );
+                      }}
+                    />
+                  </div>
                 </div>
               </Tile>
             </Container>
             <Container className="w-3/4 h-full px-3">
               <Tile className="p-8 overflow-y-scroll scroller">
                 <Table
-                  data={this.state.data}
+                  data={this.state.displayData}
                   callback={record => this.updatePath(record)}
                 />
               </Tile>
@@ -278,6 +334,8 @@ class Home extends React.Component {
           </Container>
         </Container>
       );
+    } else {
+      return <div></div>;
     }
   }
 }
