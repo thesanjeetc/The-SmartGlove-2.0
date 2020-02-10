@@ -71,4 +71,4 @@ class Glove {
 
 var args = process.argv.slice(2);
 
-new Glove(args[0] || "demo", true);
+new Glove(args[0] || "demo", false);
