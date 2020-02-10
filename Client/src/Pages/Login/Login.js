@@ -18,7 +18,7 @@ class Login extends React.Component {
       let userType = this.state.userType;
       let userID = this.state.userID;
       fetch(
-        "http://" +
+        "https://" +
           window.location.hostname +
           "/api/" +
           userType +
@@ -50,7 +50,7 @@ class Login extends React.Component {
 
   login(event) {
     event.preventDefault();
-    fetch("http://" + window.location.hostname + "/api/auth", {
+    fetch("https://" + window.location.hostname + "/api/auth", {
       method: "post",
       headers: {
         Accept: "application/json",
