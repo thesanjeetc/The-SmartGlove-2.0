@@ -48,7 +48,7 @@ class Home extends React.Component {
   }
 
   fetchRoom() {
-    fetch("http://" + window.location.hostname + this.links.clientRoom, {
+    fetch(this.links.clientRoom, {
       method: "get",
       headers: {
         Accept: "application/json",
@@ -76,7 +76,7 @@ class Home extends React.Component {
   }
 
   fetchData(path) {
-    fetch("http://" + window.location.hostname + path, {
+    fetch(path, {
       method: "get",
       headers: {
         Accept: "application/json",

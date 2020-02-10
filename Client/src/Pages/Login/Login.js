@@ -17,21 +17,13 @@ class Login extends React.Component {
     if (this.state.loggedIn) {
       let userType = this.state.userType;
       let userID = this.state.userID;
-      fetch(
-        "https://" +
-          window.location.hostname +
-          "/api/" +
-          userType +
-          "/" +
-          userID,
-        {
-          method: "get",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-          }
+      fetch("/api/" + userType + "/" + userID, {
+        method: "get",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
         }
-      )
+      })
         .then(response => response.json())
         .then(data => {
           console.log(data);
@@ -50,7 +42,7 @@ class Login extends React.Component {
 
   login(event) {
     event.preventDefault();
-    fetch("https://" + window.location.hostname + "/api/auth", {
+    fetch("/api/auth", {
       method: "post",
       headers: {
         Accept: "application/json",
