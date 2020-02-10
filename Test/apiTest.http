@@ -1,2 +1,0 @@
-GET http://localhost/api/client/3/sessions/1 HTTP/1.1
-content-type: application/json

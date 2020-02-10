@@ -5,7 +5,7 @@
   "main": "Server.js",
   "scripts": {
     "start": "nodemon Server.js",
-    "simulate": "nodemon Glove.js",
+    "simulate": "nodemon ./Glove/Glove.js",
     "heroku-postbuild": "cd Client && npm install --only=dev && npm install && npm run build",
     "devStart": "DATABASE_URL=$(heroku config:get DATABASE_URL -a thesmartglove) PORT=8000 nodemon Server.js"
   },

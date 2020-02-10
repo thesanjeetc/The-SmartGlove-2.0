@@ -34,6 +34,12 @@ class Session {
     this.currentRecording = [];
     this.recordingPos = 0;
 
+    db.getRoomRecordings(this.roomID, recordings => {
+      console.log(recordings);
+      this.recordings = recordings;
+      this.updateState(this.socket, "recordings", recordings);
+    });
+
     this.timer = new Timer(time =>
       this.updateState(this.socket, "elapsedTime", time)
     );
@@ -74,11 +80,16 @@ class Session {
         client.on("patientConnect", clientID => {
           this.clientID = clientID;
           db.createSession(this.sessionID, this.clientID);
-          db.getClientRecordings(this.clientID, recordings => {
-            console.log(recordings);
-            this.recordings = recordings;
-            this.updateState(this.socket, "recordings", recordings);
-          });
+          let now = new Date();
+          this.sessionStart = now.getTime();
+        });
+
+        client.on("disconnect", () => {
+          let now = new Date();
+          let sessionDuration = Math.ceil(
+            (now.getTime() - this.sessionStart) / 60000
+          );
+          db.updateSession(this.sessionID, sessionDuration);
         });
       });
 
@@ -137,7 +148,7 @@ class Session {
         this.updateState(this.socket, "currentPlay", false);
       }
     }
-    db.getClientRecordings(this.clientID, recordings => {
+    db.getRoomRecordings(this.roomID, recordings => {
       this.recordings = recordings;
       this.updateState(this.socket, "recordings", this.recordings);
     });
@@ -153,6 +164,7 @@ class Session {
         let name = "Recording " + (Object.keys(this.recordings).length + 1);
         console.log(name);
         //prettier-ignore
+        try{
         db.createRecording(name, { data: this.newRecording }, this.sessionID, (recordingID) => {
           this.newRecordingID = recordingID;
           
@@ -164,7 +176,10 @@ class Session {
         this.recordings.push(recording);
         this.updateState(this.socket, "recordings", this.recordings);
         this.updateState(this.socket, "currentPlay", false);
+        
         });
+        
+      }catch{}
       }
     }
   }

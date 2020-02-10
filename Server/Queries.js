@@ -16,7 +16,7 @@ const authenticate = (request, response) => {
     [username, password],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       if (results.rowCount == 0) {
         response.status(401).send("Incorrect Login Details.");
@@ -35,7 +35,7 @@ const getClientDetails = (request, response) => {
     [userID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -49,7 +49,7 @@ const getClientRoom = (request, response) => {
     [clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -70,7 +70,7 @@ const getClientSessions = (request, response) => {
     [clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -94,7 +94,7 @@ const getClientSessionRecordings = (request, response) => {
     [clientID, sessionID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -116,7 +116,28 @@ const getClientRecordings = (request, response) => {
     [clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
+
+const getRoomRecordings = (request, response) => {
+  const roomID = parseInt(request.params.roomID);
+  pool.query(
+    'SELECT "Recording"."Name", "Recording"."Timestamp", "Recording"."recordingID" \
+	  FROM "Recording" \
+	  INNER JOIN "Session" \
+	  ON "Recording"."sessionID"= "Session"."sessionID" \
+	  INNER JOIN "Client" \
+	  ON "Client"."clientID" = "Session"."clientID" \
+	  WHERE "Client"."roomID" = $1 \
+	  ORDER BY "Recording"."Timestamp" DESC;',
+    [roomID],
+    (error, results) => {
+      if (error) {
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -132,7 +153,7 @@ const createRecording = (request, response) => {
     [sessionID, sensorData, name, duration],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -146,7 +167,7 @@ const deleteRecording = (request, response) => {
     [recordingID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -163,7 +184,7 @@ const updateRecording = (request, response) => {
     [recordingID, newName],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -179,7 +200,7 @@ const getRecording = (request, response) => {
     [recordingID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -193,7 +214,7 @@ const deleteSession = (request, response) => {
     [sessionID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -208,7 +229,7 @@ const createSession = (request, response) => {
     [sessionID, clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -225,7 +246,7 @@ const updateSession = (request, response) => {
     [duration, sessionID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -243,7 +264,7 @@ const getPhysioDetails = (request, response) => {
     [userID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -261,7 +282,7 @@ const getPhysioClients = (request, response) => {
     [physioID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -282,7 +303,7 @@ const getPhysioSessions = (request, response) => {
     [physioID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -305,7 +326,7 @@ const getPhysioClientSession = (request, response) => {
     [physioID, clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -329,7 +350,7 @@ const getPhysioRecordings = (request, response) => {
     [physioID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -354,7 +375,7 @@ const getPhysioClientRecordings = (request, response) => {
     [physioID, clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       response.status(200).json(results.rows);
     }
@@ -364,6 +385,7 @@ const getPhysioClientRecordings = (request, response) => {
 module.exports = {
   authenticate,
   getClinics,
+  getRoomRecordings,
   getClientDetails,
   getClientSessions,
   getClientRecordings,

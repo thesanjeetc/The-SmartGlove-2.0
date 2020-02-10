@@ -6,6 +6,8 @@
 /.pnp
 .pnp.js
 
+/.prettierignore
+
 Client/node_modules
 Client/.pnp
 Client/.pnp.js

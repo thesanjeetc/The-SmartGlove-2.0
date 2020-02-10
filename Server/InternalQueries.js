@@ -20,7 +20,7 @@ const updateSession = (sessionID, duration) => {
     [duration, sessionID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       return results;
     }
@@ -41,9 +41,29 @@ const getClientRecordings = (clientID, callback) => {
     [clientID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       console.log(results.rows);
+      callback(results.rows);
+    }
+  );
+};
+
+const getRoomRecordings = (roomID, callback) => {
+  pool.query(
+    'SELECT "Recording"."Name", "Recording"."Timestamp", "Recording"."recordingID" \
+	  FROM "Recording" \
+	  INNER JOIN "Session" \
+	  ON "Recording"."sessionID"= "Session"."sessionID" \
+	  INNER JOIN "Client" \
+	  ON "Client"."clientID" = "Session"."clientID" \
+	  WHERE "Client"."roomID" = $1 \
+	  ORDER BY "Recording"."Timestamp" ASC;',
+    [roomID],
+    (error, results) => {
+      if (error) {
+        console.log(error);
+      }
       callback(results.rows);
     }
   );
@@ -57,7 +77,7 @@ const getRecording = (recordingID, callback) => {
     [recordingID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
       callback(results.rows[0]["data"]);
     }
@@ -71,9 +91,10 @@ const createRecording = (name, sensorData, sessionID, callback) => {
     [sessionID, sensorData, name],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
+      } else {
+        callback(results.rows[0]["recordingID"]);
       }
-      callback(results.rows[0]["recordingID"]);
     }
   );
 };
@@ -86,7 +107,7 @@ const updateRecording = (recordingID, newName) => {
     [newName, recordingID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
     }
   );
@@ -98,7 +119,7 @@ const deleteRecording = recordingID => {
     [recordingID],
     (error, results) => {
       if (error) {
-        throw error;
+        console.log(error);
       }
     }
   );
@@ -108,6 +129,7 @@ module.exports = {
   createSession,
   updateSession,
   getClientRecordings,
+  getRoomRecordings,
   getRecording,
   createRecording,
   updateRecording,
