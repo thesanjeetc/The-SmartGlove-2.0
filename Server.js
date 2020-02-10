@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 
 app.use("/api", routes);
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/client/build/index.html"));
+  res.sendFile(path.join(__dirname + "/Client/build/index.html"));
 });
 
 server.listen(process.env.PORT || 80);
