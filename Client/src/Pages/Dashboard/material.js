@@ -72,7 +72,7 @@ var fragshader = `
 
 		  // Iterates through each sensor, adding value to finalcol
           for(int i = 0; i < num; i++) {
-              finalcol += data[i]*exp(-1.*pow((distance(positions[i], texcoord) / 0.05), 0.02));
+              finalcol += data[i]*exp(-1.*pow((distance(positions[i], texcoord) / 0.05), 2.));
           }
 
 		  //Creates colour for pixel
