@@ -18,7 +18,7 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {};
     let params = queryString.parse(this.props.location.search);
-    let roomID = props.roomID === "bigbang" ? "" : props.roomID || "demo";
+    let roomID = props.roomID === "7cd34a" ? "" : props.roomID || "demo";
     if (params.device == "mobile") {
       joinRoom(roomID);
     } else {
