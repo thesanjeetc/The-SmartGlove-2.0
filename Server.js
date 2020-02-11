@@ -31,7 +31,7 @@ app.get("*", (req, res) => {
 server.listen(process.env.PORT || 80);
 
 let liveSessions = {};
-let demoSession = new Session(io, "");
+let demoSession = new Session(io, "7cd34a");
 
 io.on("connection", client => {
   let roomID = client.handshake.query["room"];
