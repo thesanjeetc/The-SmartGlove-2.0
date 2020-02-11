@@ -108,9 +108,9 @@ class Session {
 
         client.on("disconnect", () => {
           this.timer.stop();
-          this.updateState(this.socket, "elapsedTime", "-");
+//           this.updateState(this.socket, "elapsedTime", "-");
           this.updateState(this.socket, "gloveConnect", false);
-          this.updateState(this.socket, "batteryLevel", "-");
+//           this.updateState(this.socket, "batteryLevel", "-");
         });
       });
     });
