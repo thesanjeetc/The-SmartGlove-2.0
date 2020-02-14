@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Container, Tile, BaseComponent } from "../Components/Base";
-import { StateHandler } from "../Dashboard/Other/api";
 import logo from "./thesmartglove.png";
 import GlobalState from "../Globals";
 
@@ -26,7 +25,6 @@ class Login extends React.Component {
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
           GlobalState.store("userDetails", JSON.stringify(data[0]));
           this.props.history.push("/home");
         })
@@ -55,7 +53,6 @@ class Login extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         GlobalState.store("userID", data[0].userID);
         GlobalState.store("userType", data[0].UserType);
         let userID = data[0].userID;

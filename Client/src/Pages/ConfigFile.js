@@ -2,7 +2,6 @@ let Config = {
   streamInterval: 18,
   numSensors: 8,
   xLineTicks: 110,
-  darkmode: true,
   sensorColours: [
     "#f44336",
     "#E91E63",

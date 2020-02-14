@@ -14,8 +14,7 @@ class Home extends React.Component {
       this.loggedOut = true;
     } else {
       let userDetails = JSON.parse(GlobalState.get("userDetails"));
-      console.log(GlobalState.get("userType"));
-      console.log(userDetails);
+
       this.state = {
         index: -1,
         name: [userDetails.Forename, userDetails.Surname].join(" "),
@@ -29,7 +28,6 @@ class Home extends React.Component {
       this.state.path = this.state.userType
         ? "physioSessions"
         : "clientSessions";
-      this.updateLinks();
 
       this.nextRoute();
       this.state.displayData = this.state.data;

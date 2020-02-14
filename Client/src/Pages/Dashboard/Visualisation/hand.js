@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { fragshader, vertshader } from "../material.js";
+import { fragshader, vertshader } from "./material.js";
 import { StateHandler } from "../Other/api";
 import Config from "../../ConfigFile";
 
@@ -273,8 +273,6 @@ class HandVis extends Component {
       this.mouse.x = this.state.mouse.x / this.renderer.getSize().x;
       this.mouse.y = this.state.mouse.y / this.renderer.getSize().y;
     } catch {}
-    console.log("Mouse:");
-    console.log(this.mouse);
 
     // Calculate objects intersecting the picking ray
     this.raycaster.setFromCamera(this.mouse, this.camera);

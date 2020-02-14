@@ -30,7 +30,8 @@ class Timer extends Stream {
 
   format(time) {
     let seconds = time % 60;
-    let minutes = Math.floor(time / 60);
+    let hours = Math.floor(time / 3600);
+    let minutes = Math.floor(Math.floor(time / 60) % 60);
     let ss = (seconds < 10 ? "0" : "") + seconds;
     let mm = (minutes < 10 ? "0" : "") + minutes;
     return mm + ":" + ss;

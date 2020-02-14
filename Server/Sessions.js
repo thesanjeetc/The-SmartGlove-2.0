@@ -1,24 +1,6 @@
 var { Stream, Timer } = require("./Utils");
 var db = require("./InternalQueries");
 
-//server - 12, glove - 14
-
-class StateHandler {
-  constructor() {
-    this.callbacks = {};
-  }
-
-  subscribe(state, callback) {
-    this.callbacks[state] = callback;
-  }
-
-  update(state, newState) {
-    if (this.callbacks[state] !== undefined) {
-      this.callbacks[state](newState);
-    }
-  }
-}
-
 class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
@@ -35,7 +17,6 @@ class Session {
     this.recordingPos = 0;
 
     db.getRoomRecordings(this.roomID, recordings => {
-      console.log(recordings);
       this.recordings = recordings;
       this.updateState(this.socket, "recordings", recordings);
     });
@@ -69,26 +50,22 @@ class Session {
     this.socket.on("connection", client => {
       client.on("clientConnect", () => {
         client.join("web");
-        setTimeout(() => {
-          client.emit("stateSync", this.currentState);
-        }, 400);
+        client.emit("stateSync", this.currentState);
 
         client.on("stateChange", (state, newState) => {
           this.updateState(client, state, newState, true);
         });
 
         client.on("patientConnect", clientID => {
-          this.clientID = clientID;
-          db.createSession(this.sessionID, this.clientID);
           let now = new Date();
           this.sessionStart = now.getTime();
+          db.createSession(this.sessionID, clientID);
         });
 
         client.on("disconnect", () => {
           let now = new Date();
-          let sessionDuration = Math.ceil(
-            (now.getTime() - this.sessionStart) / 60000
-          );
+          let duration = now.getTime() - this.sessionStart;
+          let sessionDuration = Math.ceil(duration / 60000);
           db.updateSession(this.sessionID, sessionDuration);
         });
       });
@@ -108,9 +85,9 @@ class Session {
 
         client.on("disconnect", () => {
           this.timer.stop();
-          //this.updateState(this.socket, "elapsedTime", "-");
+          this.updateState(this.socket, "elapsedTime", "-");
           this.updateState(this.socket, "gloveConnect", false);
-          //this.updateState(this.socket, "batteryLevel", "-");
+          this.updateState(this.socket, "batteryLevel", "-");
         });
       });
     });
@@ -118,7 +95,6 @@ class Session {
 
   updateState(socket, stateName, stateValue, broadcast = false) {
     this.currentState[stateName] = stateValue;
-    // console.log(stateName, stateValue);
     this.handleStateChange(stateName, stateValue);
     broadcast
       ? socket.to("web").broadcast.emit("stateChange", stateName, stateValue)
@@ -139,7 +115,6 @@ class Session {
   }
 
   handleRecordingUpdate(stateValue) {
-    console.log(stateValue);
     if (stateValue.func == "rename") {
       db.updateRecording(stateValue.id, stateValue.name);
     } else {
@@ -162,24 +137,20 @@ class Session {
     } else {
       if (this.newRecording.length > 20) {
         let name = "Recording " + (Object.keys(this.recordings).length + 1);
-        console.log(name);
         //prettier-ignore
-        try{
         db.createRecording(name, { data: this.newRecording }, this.sessionID, (recordingID) => {
           this.newRecordingID = recordingID;
           
-        let recording = {
-          Name: name,
-          recordingID: this.newRecordingID
-        };
-        console.log(recording);
-        this.recordings.push(recording);
-        this.updateState(this.socket, "recordings", this.recordings);
-        this.updateState(this.socket, "currentPlay", false);
+          let recording = {
+            Name: name,
+            recordingID: this.newRecordingID
+          };
+
+          this.recordings.push(recording);
+          this.updateState(this.socket, "recordings", this.recordings);
+          this.updateState(this.socket, "currentPlay", false);
         
         });
-        
-      }catch{}
       }
     }
   }
@@ -187,7 +158,6 @@ class Session {
   handleRecordPlay(stateValue) {
     if (stateValue) {
       db.getRecording(stateValue, data => {
-        console.log(stateValue);
         this.currentRecording = data;
         // console.log(stateValue, data);
         this.recordingPos = 0;
@@ -205,14 +175,20 @@ class Session {
     return sensorData;
   }
 
+  recordingData() {
+    let data = this.currentRecording[this.recordingPos];
+    this.recordingPos += 1;
+    if (this.recordingPos > this.currentRecording.length - 1) {
+      this.recordingPos = 0;
+    }
+
+    return data;
+  }
+
   getData() {
     let data;
     if (this.currentState["currentPlay"]) {
-      data = this.currentRecording[this.recordingPos];
-      this.recordingPos += 1;
-      if (this.recordingPos > this.currentRecording.length - 1) {
-        this.recordingPos = 0;
-      }
+      data = this.recordingData();
     } else if (this.currentState["simulate"]) {
       data = this.simulateData();
     } else if (this.currentState["gloveConnect"]) {
@@ -220,10 +196,11 @@ class Session {
     } else {
       data = new Array(this.numSensors).fill(1);
     }
+
     if (this.currentState["recording"]) {
       this.newRecording.push(data);
     }
-    // console.log(data);
+
     return data;
   }
 }

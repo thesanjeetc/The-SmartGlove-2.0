@@ -1,6 +1,5 @@
 import React from "react";
 import { BaseComponent, Container, Tile } from "./Base";
-import { Redirect } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdjust,
@@ -12,7 +11,7 @@ import {
   faTools
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
-import { Button, MenuButton } from "../Dashboard/Components/Misc";
+import { Button, MenuButton } from "../Dashboard/Components/Button";
 import { StateHandler, EventHandler } from "../Dashboard/Other/api";
 import { withRouter } from "react-router-dom";
 

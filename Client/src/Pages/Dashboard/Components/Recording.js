@@ -7,10 +7,12 @@ import { StateHandler, EventHandler } from "../Other/api";
 const SessionContainer = props => {
   const [currentPlay, setCurrent] = useState(false);
   const [recordings, setRecordings] = useState({});
+
   useEffect(() => {
     StateHandler.subscribe("currentPlay", setCurrent);
     StateHandler.subscribe("recordings", setRecordings);
   }, []);
+
   return (
     <div className="w-full h-full">
       <div className="text-center w-full">
@@ -23,7 +25,6 @@ const SessionContainer = props => {
       >
         {Object.entries(recordings)
           .map(([x, recording]) => {
-            console.log(recording);
             return (
               <Recording
                 id={recording["recordingID"]}
@@ -54,11 +55,7 @@ const SessionContainer = props => {
 };
 
 const Recording = props => {
-  // const [name, setName] = useState("Test Recording");
   const [clicked, setClicked] = useState(false);
-  useEffect(() => {
-    // StateHandler.subscribe(props.id, setName);
-  }, []);
   let baseClass = "controlButton x w-full h-20 my-2 rounded-lg flex";
   return (
     <BaseComponent

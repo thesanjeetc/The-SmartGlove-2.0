@@ -2,7 +2,26 @@ import React, { useState, useEffect } from "react";
 import GlobalState from "../../Globals";
 import QRCode from "qrcode";
 import { BaseComponent, Container, Tile } from "../../Components/Base";
-import { Overlay } from "./Misc";
+import { StateHandler, EventHandler } from "../Other/api";
+
+const Overlay = props => {
+  const [clicked, setClicked] = useState(false);
+  useEffect(() => {
+    EventHandler.subscribe("overlay", setClicked);
+  }, []);
+  let baseClass = ["w-screen overlay h-screen absolute z-50 flex"];
+  return (
+    <BaseComponent
+      baseClass={clicked ? baseClass : [baseClass, "hidden"].join(" ")}
+      onClick={() => {
+        setClicked(!clicked);
+        EventHandler.update("overlay", !clicked);
+      }}
+    >
+      {props.children}
+    </BaseComponent>
+  );
+};
 
 const Code = props => {
   const [lightQR, setLight] = useState("");

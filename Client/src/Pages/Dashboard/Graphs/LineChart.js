@@ -79,6 +79,7 @@ class LineChart extends React.Component {
         tooltips: {
           enabled: false
         },
+        hover: { mode: null },
         legend: {
           display: false,
           position: "top",

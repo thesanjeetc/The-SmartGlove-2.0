@@ -14,6 +14,7 @@ const joinRoom = (roomID, id) => {
     query: { room: roomID },
     reconnect: true
   });
+
   socket.on("connect", () => {
     socket.emit("clientConnect");
     if (id !== undefined) socket.emit("patientConnect", id);

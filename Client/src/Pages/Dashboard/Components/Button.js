@@ -2,26 +2,6 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BaseComponent, Container, Tile } from "../../Components/Base";
 import { StateHandler, EventHandler } from "../Other/api";
-import { EventEmitter } from "../Other/StateHandler";
-
-const Overlay = props => {
-  const [clicked, setClicked] = useState(false);
-  useEffect(() => {
-    EventHandler.subscribe("overlay", setClicked);
-  }, []);
-  let baseClass = ["w-screen overlay h-screen absolute z-50 flex"];
-  return (
-    <BaseComponent
-      baseClass={clicked ? baseClass : [baseClass, "hidden"].join(" ")}
-      onClick={() => {
-        setClicked(!clicked);
-        EventHandler.update("overlay", !clicked);
-      }}
-    >
-      {props.children}
-    </BaseComponent>
-  );
-};
 
 const Button = props => {
   return (
@@ -104,4 +84,4 @@ const ControlButton = props => {
   );
 };
 
-export { Button, ControlButton, MenuButton, ClickButton, Overlay };
+export { Button, ControlButton, MenuButton, ClickButton };

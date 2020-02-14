@@ -60,7 +60,7 @@ class Glove {
   realtime() {
     let sensorData = [];
     for (var i = 0; i < this.numSensors; i++) {
-      sensorData.push(this.x + i * 2);
+      sensorData.push(this.x + i * 4);
     }
     return sensorData;
   }
