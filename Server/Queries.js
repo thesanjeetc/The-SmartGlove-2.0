@@ -4,8 +4,9 @@ const getClinics = (request, response) => {
   pool.query('SELECT * FROM  "Clinic"', (error, results) => {
     if (error) {
       throw error;
+    } else {
+      response.status(200).json(results.rows);
     }
-    response.status(200).json(results.rows);
   });
 };
 
@@ -36,8 +37,9 @@ const getClientDetails = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -50,8 +52,9 @@ const getClientRoom = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -71,8 +74,9 @@ const getClientSessions = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -95,8 +99,9 @@ const getClientSessionRecordings = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -117,8 +122,9 @@ const getClientRecordings = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -138,8 +144,9 @@ const getRoomRecordings = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -154,8 +161,9 @@ const createRecording = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -168,8 +176,9 @@ const deleteRecording = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -185,8 +194,9 @@ const updateRecording = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -201,8 +211,9 @@ const getRecording = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -215,8 +226,9 @@ const deleteSession = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -230,8 +242,9 @@ const createSession = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -247,8 +260,9 @@ const updateSession = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -265,8 +279,9 @@ const getPhysioDetails = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -283,8 +298,9 @@ const getPhysioClients = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -304,8 +320,9 @@ const getPhysioSessions = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -327,8 +344,9 @@ const getPhysioClientSession = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -351,8 +369,9 @@ const getPhysioRecordings = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };
@@ -376,8 +395,9 @@ const getPhysioClientRecordings = (request, response) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        response.status(200).json(results.rows);
       }
-      response.status(200).json(results.rows);
     }
   );
 };

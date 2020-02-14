@@ -6,8 +6,9 @@ const createSession = (sessionID, clientID) => {
 	VALUES ($1, $2, CURRENT_TIMESTAMP, 0);',
     [sessionID, clientID],
     (error, results) => {
-      //   console.log(error);
-      return results;
+      if (error) {
+        console.log(error);
+      }
     }
   );
 };
@@ -22,7 +23,6 @@ const updateSession = (sessionID, duration) => {
       if (error) {
         console.log(error);
       }
-      return results;
     }
   );
 };
@@ -42,9 +42,9 @@ const getClientRecordings = (clientID, callback) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        callback(results.rows);
       }
-      console.log(results.rows);
-      callback(results.rows);
     }
   );
 };
@@ -63,8 +63,9 @@ const getRoomRecordings = (roomID, callback) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        callback(results.rows);
       }
-      callback(results.rows);
     }
   );
 };
@@ -78,8 +79,9 @@ const getRecording = (recordingID, callback) => {
     (error, results) => {
       if (error) {
         console.log(error);
+      } else {
+        callback(results.rows[0]["data"]);
       }
-      callback(results.rows[0]["data"]);
     }
   );
 };
