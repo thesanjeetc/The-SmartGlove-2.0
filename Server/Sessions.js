@@ -25,7 +25,7 @@ class Session {
     this.socket = socket;
     this.sessionID = Math.floor(Math.random() * 1000000);
     this.streamInterval = 25;
-    this.numSensors = 12;
+    this.numSensors = 8;
     this.sensorData;
     this.x = 0;
 
@@ -108,9 +108,9 @@ class Session {
 
         client.on("disconnect", () => {
           this.timer.stop();
-          this.updateState(this.socket, "elapsedTime", "-");
+          //this.updateState(this.socket, "elapsedTime", "-");
           this.updateState(this.socket, "gloveConnect", false);
-          this.updateState(this.socket, "batteryLevel", "-");
+          //this.updateState(this.socket, "batteryLevel", "-");
         });
       });
     });
