@@ -44,7 +44,19 @@ const uid = () => {
     .substr(2, 8);
 };
 
+const https = require("https");
+
+const wakeUpDyno = () => {
+  setInterval(() => {
+    https.get("https://thesmartglove.herokuapp.com/").on("error", err => {
+      console.log("Ping Error: " + err.message);
+    });
+  }, 1500000);
+};
+
 module.exports = {
   Stream,
-  Timer
+  Timer,
+  wakeUpDyno,
+  uid
 };

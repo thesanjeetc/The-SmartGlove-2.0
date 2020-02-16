@@ -7,6 +7,7 @@ var Session = require("./Server/Sessions");
 var routes = require("./Server/Routes");
 var cors = require("cors");
 var express = require("express");
+var { wakeUpDyno } = require("./Server/Utils");
 
 app.use(express.static(path.join(__dirname, "Client/build")));
 
@@ -28,7 +29,9 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/Client/build/index.html"));
 });
 
-server.listen(process.env.PORT || 80);
+server.listen(process.env.PORT || 80, () => {
+  wakeUpDyno(); // will start once server starts
+});
 
 let liveSessions = {};
 let demoSession = new Session(io, "7cd34a");
