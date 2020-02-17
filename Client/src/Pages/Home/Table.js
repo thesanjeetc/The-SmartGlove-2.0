@@ -51,7 +51,7 @@ const Table = props => {
       if (key.includes("ID")) return;
       headers.push(<Header key={i}>{key}</Header>);
     });
-    tableData.push();
+    tableData.push(headers);
 
     props.data.forEach(element => {
       let row = [];

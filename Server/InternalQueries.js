@@ -80,7 +80,11 @@ const getRecording = (recordingID, callback) => {
       if (error) {
         console.log(error);
       } else {
-        callback(results.rows[0]["data"]);
+        try {
+          callback(results.rows[0]["data"]);
+        } catch {
+          console.log("Undefined Error.");
+        }
       }
     }
   );

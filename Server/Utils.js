@@ -38,10 +38,8 @@ class Timer extends Stream {
   }
 }
 
-const uid = () => {
-  return Math.random()
-    .toString(16)
-    .substr(2, 8);
+const UID = () => {
+  return Math.floor(Math.random() * 1000000);
 };
 
 const https = require("https");
@@ -58,5 +56,5 @@ module.exports = {
   Stream,
   Timer,
   wakeUpDyno,
-  uid
+  UID
 };

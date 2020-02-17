@@ -1,11 +1,11 @@
-var { Stream, Timer } = require("./Utils");
+var { Stream, Timer, UID } = require("./Utils");
 var db = require("./InternalQueries");
 
 class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
-    this.sessionID = Math.floor(Math.random() * 1000000);
+    this.sessionID = UID();
     this.streamInterval = 25;
     this.numSensors = 8;
     this.sensorData;
@@ -50,7 +50,9 @@ class Session {
     this.socket.on("connection", client => {
       client.on("clientConnect", () => {
         client.join("web");
-        client.emit("stateSync", this.currentState);
+        setTimeout(() => {
+          client.emit("stateSync", this.currentState);
+        }, 400);
 
         client.on("stateChange", (state, newState) => {
           this.updateState(client, state, newState, true);
@@ -123,10 +125,12 @@ class Session {
         this.updateState(this.socket, "currentPlay", false);
       }
     }
-    db.getRoomRecordings(this.roomID, recordings => {
-      this.recordings = recordings;
-      this.updateState(this.socket, "recordings", this.recordings);
-    });
+
+    setTimeout(() => {
+      db.getRoomRecordings(this.roomID, recordings => {
+        this.updateState(this.socket, "recordings", recordings);
+      });
+    }, 400);
   }
 
   handleRecording(stateValue) {
