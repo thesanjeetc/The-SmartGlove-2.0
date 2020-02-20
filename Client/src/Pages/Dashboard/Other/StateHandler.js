@@ -53,7 +53,6 @@ class SyncStateHandler extends EventEmitter {
     this.socket.emit("stateChange", state, value);
     if (localSync) {
       super.update(state, value);
-      console.log("hhiiiiiiiiiii");
     }
   }
 }

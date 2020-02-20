@@ -1,11 +1,12 @@
-var { Stream, Timer, UID } = require("./Utils");
+var { Stream, UID } = require("./Utils");
 var db = require("./InternalQueries");
-
+var StateHandler = require("./StateManager");
 class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
     this.socket = socket;
     this.sessionID = UID();
+
     this.streamInterval = 25;
     this.numSensors = 8;
     this.sensorData;
@@ -16,19 +17,6 @@ class Session {
     this.currentRecording = [];
     this.recordingPos = 0;
 
-    db.getRoomRecordings(this.roomID, recordings => {
-      this.recordings = recordings;
-      this.updateState(this.socket, "recordings", recordings);
-    });
-
-    this.timer = new Timer(time =>
-      this.updateState(this.socket, "elapsedTime", time)
-    );
-
-    this.stream = new Stream(() => {
-      this.updateState(this.socket, "sensorData", this.getData());
-    }, this.streamInterval);
-
     this.currentState = {
       simulate: true,
       streaming: false,
@@ -36,99 +24,51 @@ class Session {
       recording: false,
       batteryLevel: "-",
       elapsedTime: "-",
-      recordings: this.recordings,
+      recordings: [],
       currentPlay: false
     };
 
-    this.stateHandler = {
-      streaming: this.handleStreaming,
-      recording: this.handleRecording,
-      currentPlay: this.handleRecordPlay,
-      recordingsUpdate: this.handleRecordingUpdate
-    };
+    this.ee = new StateHandler(this.socket, this);
 
-    this.socket.on("connection", client => {
-      client.on("clientConnect", () => {
-        client.join("web");
-        setTimeout(() => {
-          client.emit("stateSync", this.currentState);
-        }, 400);
+    this.ee.subscribe("streaming", value => this.handleStreaming(value));
+    this.ee.subscribe("recording", value => this.handleRecording(value));
+    this.ee.subscribe("currentPlay", value => this.handleRecordPlay(value));
+    //prettier-ignore
+    this.ee.subscribe("recordingsUpdate", value =>this.handleRecordUpdate(value));
+    this.ee.subscribe("simulate", value => this.handleSimulate(value));
 
-        client.on("stateChange", (state, newState) => {
-          this.updateState(client, state, newState, true);
-        });
-
-        client.on("patientConnect", clientID => {
-          let now = new Date();
-          this.sessionStart = now.getTime();
-          db.createSession(this.sessionID, clientID);
-        });
-
-        client.on("disconnect", () => {
-          let now = new Date();
-          let duration = now.getTime() - this.sessionStart;
-          let sessionDuration = Math.ceil(duration / 60000);
-          db.updateSession(this.sessionID, sessionDuration);
-        });
-      });
-
-      client.on("gloveConnect", () => {
-        this.timer.start();
-        this.updateState(this.socket, "gloveConnect", true);
-        this.glove = client.id;
-
-        client.on("batteryLevel", batteryLevel => {
-          this.updateState(this.socket, "batteryLevel", batteryLevel);
-        });
-
-        client.on("sensorData", sensorData => {
-          this.sensorData = sensorData;
-        });
-
-        client.on("disconnect", () => {
-          this.timer.stop();
-          this.updateState(this.socket, "elapsedTime", "-");
-          this.updateState(this.socket, "gloveConnect", false);
-          this.updateState(this.socket, "batteryLevel", "-");
-        });
-      });
+    db.getRoomRecordings(this.roomID, recordings => {
+      this.ee.update("recordings", recordings);
     });
+
+    this.stream = new Stream(() => {
+      this.ee.update("sensorData", this.getData());
+    }, this.streamInterval);
   }
 
-  updateState(socket, stateName, stateValue, broadcast = false) {
-    this.currentState[stateName] = stateValue;
-    this.handleStateChange(stateName, stateValue);
-    broadcast
-      ? socket.to("web").broadcast.emit("stateChange", stateName, stateValue)
-      : socket.to("web").emit("stateChange", stateName, stateValue);
-  }
-
-  handleStateChange(state, value) {
-    if (this.stateHandler[state] !== undefined) {
-      this.stateHandler[state].call(this, value);
+  handleSimulate(stateValue) {
+    if (this.currentState["gloveConnect"]) {
+      this.socket.to(this.glove).emit("streamState", !stateValue);
     }
   }
 
   handleStreaming(stateValue) {
     stateValue ? this.stream.start() : this.stream.stop();
-    if (this.currentState["gloveConnect"]) {
-      this.socket.to(this.glove).emit("streamState", stateValue);
-    }
   }
 
-  handleRecordingUpdate(stateValue) {
+  handleRecordUpdate(stateValue) {
     if (stateValue.func == "rename") {
       db.updateRecording(stateValue.id, stateValue.name);
     } else {
       db.deleteRecording(stateValue.id);
       if ((this.currentState["currentPlay"] = stateValue.id)) {
-        this.updateState(this.socket, "currentPlay", false);
+        this.ee.update("currentPlay", false);
       }
     }
 
     setTimeout(() => {
       db.getRoomRecordings(this.roomID, recordings => {
-        this.updateState(this.socket, "recordings", recordings);
+        this.ee.update("recordings", recordings);
       });
     }, 400);
   }
@@ -136,13 +76,16 @@ class Session {
   handleRecording(stateValue) {
     if (stateValue) {
       this.newRecording = [];
-      this.updateState(this.socket, "streaming", true);
-      this.updateState(this.socket, "currentPlay", false);
+      this.ee.update("streaming", true);
+      this.ee.update("currentPlay", false);
     } else {
       if (this.newRecording.length > 20) {
-        let name = "Recording " + (Object.keys(this.recordings).length + 1);
+        let name =
+          "Recording " +
+          (Object.keys(this.currentState["recordings"]).length + 1);
+        let data = { data: this.newRecording };
         //prettier-ignore
-        db.createRecording(name, { data: this.newRecording }, this.sessionID, (recordingID) => {
+        db.createRecording(name, data, this.sessionID, (recordingID) => {
           this.newRecordingID = recordingID;
           
           let recording = {
@@ -150,9 +93,9 @@ class Session {
             recordingID: this.newRecordingID
           };
 
-          this.recordings.push(recording);
-          this.updateState(this.socket, "recordings", this.recordings);
-          this.updateState(this.socket, "currentPlay", false);
+          this.currentState["recordings"].push(recording);
+          this.ee.update("recordings", this.currentState["recordings"]);
+          this.ee.update("currentPlay", false);
         
         });
       }
@@ -163,9 +106,8 @@ class Session {
     if (stateValue) {
       db.getRecording(stateValue, data => {
         this.currentRecording = data;
-        // console.log(stateValue, data);
         this.recordingPos = 0;
-        this.updateState(this.socket, "streaming", true);
+        this.ee.update("streaming", true);
       });
     }
   }

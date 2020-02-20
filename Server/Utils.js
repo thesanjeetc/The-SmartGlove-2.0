@@ -87,7 +87,7 @@ let l = [
   "02/17/2020 5:35 PM",
   "02/14/2020 7:49 PM"
 ];
-console.log(mergeSort(l, 1));
+// console.log(mergeSort(l, 1));
 
 module.exports = {
   Stream,
