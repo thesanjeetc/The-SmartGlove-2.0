@@ -7,7 +7,7 @@ const createSession = (sessionID, clientID) => {
     [sessionID, clientID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       }
     }
   );
@@ -21,7 +21,7 @@ const updateSession = (sessionID, duration) => {
     [duration, sessionID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       }
     }
   );
@@ -41,7 +41,7 @@ const getClientRecordings = (clientID, callback) => {
     [clientID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       } else {
         callback(results.rows);
       }
@@ -62,7 +62,7 @@ const getRoomRecordings = (roomID, callback) => {
     [roomID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       } else {
         callback(results.rows);
       }
@@ -78,7 +78,7 @@ const getRecording = (recordingID, callback) => {
     [recordingID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       } else {
         try {
           callback(results.rows[0]["data"]);
@@ -97,7 +97,7 @@ const createRecording = (name, sensorData, sessionID, callback) => {
     [sessionID, sensorData, name],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       } else {
         callback(results.rows[0]["recordingID"]);
       }
@@ -113,7 +113,7 @@ const updateRecording = (recordingID, newName) => {
     [newName, recordingID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       }
     }
   );
@@ -125,7 +125,7 @@ const deleteRecording = recordingID => {
     [recordingID],
     (error, results) => {
       if (error) {
-        console.log(error);
+        console.log("[DATABASE ERROR]: " + error.detail);
       }
     }
   );

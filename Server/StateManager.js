@@ -42,7 +42,7 @@ class Client {
     this.stateHandler = stateHandler;
     this.handleConnect(socket);
 
-    socket.on("stateChange", data => this.handleStateChange(data));
+    socket.on("stateChange", data => this.handleStateChange(socket, data));
     socket.on("patientConnect", data => this.handlePatient(data));
     socket.on("clientConnect", data => this.handleDisconnect(data));
   }
@@ -54,8 +54,8 @@ class Client {
     }, 400);
   }
 
-  handleStateChange(data) {
-    this.stateHandler.update(data[0], data[1]);
+  handleStateChange(socket, data) {
+    this.stateHandler.update(...data, socket);
   }
 
   handlePatient(data) {
@@ -76,20 +76,22 @@ class StateManager extends EventEmitter {
   constructor(socket, session) {
     super();
 
+    this.session = session;
+    this.socket = socket;
+    this.currentState = session.currentState;
+
     socket.on("connection", client => {
       client.on("gloveConnect", () => new Glove(client, this));
       client.on("clientConnect", () => new Client(client, this));
     });
-
-    this.session = session;
-    this.socket = socket;
-    this.currentState = session.currentState;
   }
 
-  update(state, value) {
+  update(state, value, socket) {
     super.update(state, value);
     this.currentState[state] = value;
-    this.socket.to("web").emit("stateChange", state, value);
+    socket
+      ? socket.broadcast.to("web").emit("stateChange", state, value)
+      : this.socket.to("web").emit("stateChange", state, value);
   }
 
   updateAttr(name, value) {

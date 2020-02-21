@@ -11,7 +11,6 @@ class EventEmitter {
   }
 
   update(state, value) {
-    console.log("Event Emitted: ", state, value);
     if (this.stateCallbacks[state] !== undefined) {
       this.stateCallbacks[state].forEach((callback, index) => {
         callback(value);
