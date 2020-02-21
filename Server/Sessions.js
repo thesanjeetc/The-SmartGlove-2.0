@@ -1,6 +1,6 @@
 var { Stream, UID } = require("./Utils");
 var db = require("./InternalQueries");
-var StateHandler = require("./StateManager");
+var StateManager = require("./StateManager");
 class Session {
   constructor(socket, roomID) {
     this.roomID = roomID;
@@ -28,7 +28,7 @@ class Session {
       currentPlay: false
     };
 
-    this.ee = new StateHandler(this.socket, this);
+    this.ee = new StateManager(this.socket, this);
 
     this.ee.subscribe("streaming", value => this.handleStreaming(value));
     this.ee.subscribe("recording", value => this.handleRecording(value));

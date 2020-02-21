@@ -1,3 +1,21 @@
+class EventEmitter {
+  constructor() {
+    this.stateCallbacks = {};
+  }
+
+  subscribe(state, callback) {
+    if (this.stateCallbacks[state] === undefined) {
+      this.stateCallbacks[state] = callback;
+    }
+  }
+
+  update(state, value) {
+    if (this.stateCallbacks[state] !== undefined) {
+      this.stateCallbacks[state](value);
+    }
+  }
+}
+
 class Stream {
   constructor(callback, interval) {
     this.callback = callback;
@@ -94,5 +112,6 @@ module.exports = {
   Timer,
   wakeUpDyno,
   mergeSort,
-  UID
+  UID,
+  EventEmitter
 };

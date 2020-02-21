@@ -1,21 +1,5 @@
-var { Timer } = require("./Utils");
+var { EventEmitter, Timer } = require("./Utils");
 var db = require("./InternalQueries");
-
-class EventEmitter {
-  constructor(socket) {
-    this.callbacks = {};
-    this.socket = socket;
-  }
-
-  subscribe(state, callback) {
-    if (this.callbacks[state] === undefined) {
-      this.callbacks[state] = callback;
-      this.socket.on(state, (...data) => {
-        callback([this.socket, data]);
-      });
-    }
-  }
-}
 
 class Glove {
   constructor(socket, stateHandler) {
@@ -26,27 +10,26 @@ class Glove {
 
     this.handleConnect(socket);
 
-    let ee = new EventEmitter(socket);
-    ee.subscribe("batteryLevel", params => this.handleBatteryLevel(...params));
-    ee.subscribe("sensorData", params => this.handleSensorData(...params));
-    ee.subscribe("disconnect", params => this.handleDisconnect(...params));
+    socket.on("batteryLevel", data => this.handleBatteryLevel(data));
+    socket.on("sensorData", data => this.handleSensorData(data));
+    socket.on("disconnect", data => this.handleDisconnect(data));
   }
 
-  handleConnect(socket, data) {
+  handleConnect(socket) {
     this.timer.start();
     this.stateHandler.updateAttr("glove", socket.id);
     this.stateHandler.update("gloveConnect", true);
   }
 
-  handleBatteryLevel(socket, data) {
+  handleBatteryLevel(data) {
     this.stateHandler.update("batteryLevel", data);
   }
 
-  handleSensorData(socket, data) {
-    this.stateHandler.updateAttr("sensorData", data[0]);
+  handleSensorData(data) {
+    this.stateHandler.updateAttr("sensorData", data);
   }
 
-  handleDisconnect(socket, data) {
+  handleDisconnect(data) {
     this.timer.stop();
     this.stateHandler.update("elapsedTime", "-");
     this.stateHandler.update("gloveConnect", false);
@@ -59,30 +42,29 @@ class Client {
     this.stateHandler = stateHandler;
     this.handleConnect(socket);
 
-    let ee = new EventEmitter(socket);
-    ee.subscribe("stateChange", params => this.handleStateChange(...params));
-    ee.subscribe("patientConnect", params => this.handlePatient(...params));
-    ee.subscribe("clientConnect", params => this.handleDisconnect(...params));
+    socket.on("stateChange", data => this.handleStateChange(data));
+    socket.on("patientConnect", data => this.handlePatient(data));
+    socket.on("clientConnect", data => this.handleDisconnect(data));
   }
 
-  handleConnect(socket, data) {
+  handleConnect(socket) {
     socket.join("web");
     setTimeout(() => {
       socket.emit("stateSync", this.stateHandler.currentState);
     }, 400);
   }
 
-  handleStateChange(socket, [state, newState]) {
-    this.stateHandler.update(state, newState, true);
+  handleStateChange(data) {
+    this.stateHandler.update(data[0], data[1]);
   }
 
-  handlePatient(socket, data) {
+  handlePatient(data) {
     let now = new Date();
     this.sessionStart = now.getTime();
-    db.createSession(this.stateHandler.getAttr("sessionID"), data[0]);
+    db.createSession(this.stateHandler.getAttr("sessionID"), data);
   }
 
-  handleDisconnect(socket, data) {
+  handleDisconnect(data) {
     let now = new Date();
     let duration = now.getTime() - this.sessionStart;
     let sessionDuration = Math.ceil(duration / 60000);
@@ -90,8 +72,10 @@ class Client {
   }
 }
 
-class StateHandler {
+class StateManager extends EventEmitter {
   constructor(socket, session) {
+    super();
+
     socket.on("connection", client => {
       client.on("gloveConnect", () => new Glove(client, this));
       client.on("clientConnect", () => new Client(client, this));
@@ -99,25 +83,12 @@ class StateHandler {
 
     this.session = session;
     this.socket = socket;
-    this.callbacks = {};
     this.currentState = session.currentState;
   }
 
-  handle(state, value) {
-    this.currentState[state] = value;
-    if (this.callbacks[state] !== undefined) {
-      this.callbacks[state](value);
-    }
-  }
-
-  subscribe(state, callback) {
-    if (this.callbacks[state] === undefined) {
-      this.callbacks[state] = callback;
-    }
-  }
-
   update(state, value) {
-    this.handle(state, value);
+    super.update(state, value);
+    this.currentState[state] = value;
     this.socket.to("web").emit("stateChange", state, value);
   }
 
@@ -130,4 +101,4 @@ class StateHandler {
   }
 }
 
-module.exports = StateHandler;
+module.exports = StateManager;
