@@ -1,4 +1,5 @@
-var { EventEmitter, Timer } = require("./Utils");
+var { EventEmitter, Timer, UID } = require("./Utils");
+var Session = require("./Session");
 var db = require("./InternalQueries");
 
 class Glove {
@@ -17,7 +18,7 @@ class Glove {
 
   handleConnect(socket) {
     this.timer.start();
-    this.stateHandler.updateAttr("glove", socket.id);
+    this.stateHandler.glove = socket.id;
     this.stateHandler.update("gloveConnect", true);
   }
 
@@ -26,7 +27,7 @@ class Glove {
   }
 
   handleSensorData(data) {
-    this.stateHandler.updateAttr("sensorData", data);
+    this.stateHandler.sensorData = data;
   }
 
   handleDisconnect(data) {
@@ -51,7 +52,7 @@ class Client {
     socket.join("web");
     setTimeout(() => {
       socket.emit("stateSync", this.stateHandler.currentState);
-    }, 400);
+    }, 500);
   }
 
   handleStateChange(socket, data) {
@@ -61,24 +62,36 @@ class Client {
   handlePatient(data) {
     let now = new Date();
     this.sessionStart = now.getTime();
-    db.createSession(this.stateHandler.getAttr("sessionID"), data);
+    db.createSession(this.stateHandler.sessionID, data);
   }
 
   handleDisconnect(data) {
     let now = new Date();
     let duration = now.getTime() - this.sessionStart;
     let sessionDuration = Math.ceil(duration / 60000);
-    db.updateSession(this.stateHandler.getAttr("sessionID"), sessionDuration);
+    db.updateSession(this.stateHandler.sessionID, sessionDuration);
   }
 }
 
-class StateManager extends EventEmitter {
-  constructor(socket, session) {
+class SessionManager extends EventEmitter {
+  constructor(socket, roomID) {
     super();
-
-    this.session = session;
     this.socket = socket;
-    this.currentState = session.currentState;
+    this.roomID = roomID;
+
+    this.sessionID = UID();
+    this.session = new Session(this.sessionID, this);
+
+    this.currentState = {
+      simulate: true,
+      streaming: false,
+      gloveConnect: false,
+      recording: false,
+      batteryLevel: "-",
+      elapsedTime: "-",
+      recordings: [],
+      currentPlay: false
+    };
 
     socket.on("connection", client => {
       client.on("gloveConnect", () => new Glove(client, this));
@@ -94,13 +107,13 @@ class StateManager extends EventEmitter {
       : this.socket.to("web").emit("stateChange", state, value);
   }
 
-  updateAttr(name, value) {
-    this.session[name] = value;
+  updateGlove(state, value) {
+    this.socket.to(this.glove).emit(state, value);
   }
 
-  getAttr(name) {
-    return this.session[name];
+  getState(state) {
+    return this.currentState[state];
   }
 }
 
-module.exports = StateManager;
+module.exports = SessionManager;

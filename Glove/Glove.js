@@ -15,7 +15,6 @@ class Glove {
     setInterval(() => {
       this.x += 1;
       this.x > 100 ? (this.x = 0) : (this.x = this.x);
-      console.log(this.x);
     }, 25);
 
     var socket = io.connect(
@@ -66,6 +65,4 @@ class Glove {
   }
 }
 
-var args = process.argv.slice(2);
-
-new Glove(args[0] || "demo", true);
+new Glove("demo", true);
