@@ -18,4 +18,4 @@ The SmartGlove is a prototype pressure sensing glove aimed at helping physiother
 
 ## Glove Simulation
 1) Go to https://thesmartglove.herokuapp.com/room/ + {custom room ID}
-2) Connect to the sever, with this repl: https://tiny.cc/glovesim, substituting with your custom room ID.
+2) Connect to the sever, with this repl: https://repl.it/@thesanjeetc/thesmartglove, substituting with your custom room ID.
