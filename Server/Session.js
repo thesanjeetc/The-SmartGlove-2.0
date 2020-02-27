@@ -1,9 +1,9 @@
 var { Stream } = require("./Utils");
 var db = require("./InternalQueries");
 class Session {
-  constructor(sessionID, stateManager) {
+  constructor(sessionID, stateHandler) {
     this.sessionID = sessionID;
-    this.stateHandler = stateManager;
+    this.stateHandler = stateHandler;
 
     this.streamInterval = 25;
     this.numSensors = 8;
@@ -62,9 +62,7 @@ class Session {
       }
     }
 
-    setTimeout(() => {
-      this.updateRecordings();
-    }, 400);
+    setTimeout(() => this.updateRecordings(), 400);
   }
 
   handleRecording(stateValue) {
