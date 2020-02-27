@@ -131,6 +131,7 @@ class HandVis extends Component {
     const width = canvas.clientWidth;
     // console.log(width);
     const height = canvas.clientHeight;
+    console.log(height, width);
 
     // adjust displayBuffer size to match
     if (canvas.width !== width || canvas.height !== height) {
@@ -141,6 +142,15 @@ class HandVis extends Component {
 
       // update any render target sizes here
     }
+  }
+
+  resizeDisplay(width, height) {
+    // you must pass false here or three.js sadly fights the Bowser
+    this.renderer.setSize(width, height, false);
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+
+    // update any render target sizes here
   }
 
   continueLoading() {
@@ -187,7 +197,6 @@ class HandVis extends Component {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.camera.position.set(1.25, 26, 0);
     this.controls.update();
-
     StateHandler.subscribe("sensorData", dataPoints => {
       if (dataPoints !== null) {
         this.setState({
@@ -195,6 +204,8 @@ class HandVis extends Component {
         });
       }
     });
+
+    StateHandler.subscribe("videoCall", () => this.resizeDisplay(407, 394));
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -310,10 +321,6 @@ class HandVis extends Component {
   //   this.el.appendChild( this.renderer.domElement ); // mount using React ref
   // };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.newData != nextState.newData;
-  }
-
   addCustomSceneObjects = () => {
     const geometry = new THREE.BoxGeometry(2, 2, 2);
     const material = new THREE.MeshPhongMaterial({
@@ -342,7 +349,7 @@ class HandVis extends Component {
   startAnimationLoop = () => {
     // this.cube.rotation.x += 0.01;
     // this.cube.rotation.y += 0.01;
-    this.resizeCanvasToDisplaySize();
+    // this.resizeCanvasToDisplaySize();
     this.renderer.render(this.scene, this.camera);
     this.requestID = window.requestAnimationFrame(this.startAnimationLoop);
   };

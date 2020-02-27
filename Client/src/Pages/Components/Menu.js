@@ -60,13 +60,20 @@ const MenuBar = props => {
         selectedColor="bg-main"
         stateName="simulate"
       />
-      <MenuButton icon={faPhoneAlt} />
+
+      <MenuButton
+        icon={faPhoneAlt}
+        selectedColor="bg-main"
+        stateName="videoCall"
+        callback={state => {
+          StateHandler.update("videoCall", state, true);
+        }}
+      />
       <MenuButton
         icon={faMobileAlt}
         stateName="overlay"
         stateSync={false}
         callback={state => {
-          console.log("open");
           EventHandler.update("overlay", state);
         }}
       />
