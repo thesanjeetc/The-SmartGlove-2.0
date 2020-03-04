@@ -28,7 +28,16 @@ class HandVis extends Component {
 
     this.camera = new THREE.PerspectiveCamera(70, 2, 1, 1000);
 
-    // Set up raycaster and mouse
+    this.nonVecPosArr = [
+      [0.788, 0.1357],
+      [0.9108, 0.7045],
+      [0.7564, 0.571],
+      [0.7189, 0.8318],
+      [0.6541, 0.7276],
+      [0.4228, 0.9246],
+      [0.4039, 0.8121],
+      [0.434, 0.377]
+    ];
     this.posarr = [];
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -37,13 +46,19 @@ class HandVis extends Component {
     this.isListening = false;
     this.numbers = [];
     this.labels = [];
-    for (let i = 1; i < Config.numSensors + 1; i++) {
+    for (let i = 1; i < 8; i++) {
       this.labels.push(i);
     }
-    // Set up initial random sensor positions
-    for (var i = 0; i < 16; i++) {
-      this.posarr.push(new THREE.Vector2(Math.random(), Math.random()));
+
+    for (var i = 0; i < 8; i++) {
+      let vec = new THREE.Vector2(
+        this.nonVecPosArr[i][0],
+        this.nonVecPosArr[i][1]
+      );
+      this.posarr.push(vec);
+      console.log(vec);
     }
+
     this.clock = new THREE.Clock();
 
     // Load geometry
@@ -131,7 +146,6 @@ class HandVis extends Component {
     const width = canvas.clientWidth;
     // console.log(width);
     const height = canvas.clientHeight;
-    console.log(height, width);
 
     // adjust displayBuffer size to match
     if (canvas.width !== width || canvas.height !== height) {
