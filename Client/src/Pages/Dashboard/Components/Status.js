@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BaseComponent, Container, Tile } from "../../Components/Base";
-import { Button, ClickButton, ControlButton } from "./Misc";
+import { Button, ClickButton, ControlButton } from "./Button";
 import { StateHandler } from "../Other/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

@@ -6,7 +6,6 @@
 //
 // }
 
-
 var vertshader = `
 
   // switch on high precision floats
@@ -18,7 +17,7 @@ var vertshader = `
   {
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
       texcoord  = uv;
-  }`
+  }`;
 
 var fragshader = `
 	  // Set up variables
@@ -28,9 +27,9 @@ var fragshader = `
       #include <common>
       varying vec2 texcoord;
       uniform sampler2D text;
-      uniform vec2 positions[16];
-  	  uniform float data[16];
-      const int num = 16;
+      uniform vec2 positions[8];
+  	  uniform float data[8];
+      const int num = 8;
 
 	  // Set up colourmap components
       float colormap_red(float x) {
@@ -78,6 +77,6 @@ var fragshader = `
 		  //Creates colour for pixel
 		  gl_FragColor = colormap(clamp(finalcol * val, 0., 1.));
       }
-`
+`;
 
-export {vertshader, fragshader}
+export { vertshader, fragshader };

@@ -51,16 +51,21 @@ const Table = props => {
       if (key.includes("ID")) return;
       headers.push(<Header key={i}>{key}</Header>);
     });
-    tableData.push(<tr className="rounded rowhover">{headers}</tr>);
+    tableData.push(headers);
+
     props.data.forEach(element => {
       let row = [];
+
       Object.entries(element).forEach(([key, value], j) => {
         if (key.includes("ID")) return;
-        if (key == "Timestamp") {
+
+        if (key == "DoB" || key == "Timestamp") {
           value = moment(value).format("MM/DD/YYYY h:mm A");
         }
+
         row.push(<Column key={j}>{value}</Column>);
       });
+
       tableData.push(
         <Row
           data={element}

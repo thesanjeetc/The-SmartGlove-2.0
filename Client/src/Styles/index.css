@@ -4,7 +4,7 @@ body {
   width: 100vw;
 }
 
-iframe {
+#page {
   border: 0;
   position: fixed;
   top: 0;
@@ -253,4 +253,9 @@ table tr {
     background-color: #5271ff;
     color: white;
   }
+}
+
+.vidCall {
+  width: 100%;
+  height: 200px;
 }

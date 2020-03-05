@@ -1,6 +1,5 @@
 import React from "react";
 import { BaseComponent, Container, Tile } from "./Base";
-import { Redirect } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAdjust,
@@ -12,91 +11,86 @@ import {
   faTools
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
-import { Button, MenuButton } from "../Dashboard/Components/Misc";
+import { Button, MenuButton } from "../Dashboard/Components/Button";
 import { StateHandler, EventHandler } from "../Dashboard/Other/api";
 import { withRouter } from "react-router-dom";
 
 const MenuBar = props => {
   let userDetails = JSON.parse(GlobalState.get("userDetails"));
-  let opts = {
-    home: {
-      physio: (
-        <div className="h-1/3 flex-1">
-          <MenuButton
-            icon={faSignOutAlt}
-            selectedColor="bg-main"
-            stateSync={false}
-            stateName="Logout"
-            callback={() => {
-              GlobalState.delete("userDetails");
-              GlobalState.delete("userID");
-              GlobalState.delete("userType");
-              props.history.push("/login");
-            }}
-          />
-        </div>
-      ),
-      client: (
-        <div className="h-1/3 flex-1">
-          <MenuButton
-            icon={faSignOutAlt}
-            selectedColor="bg-main"
-            stateSync={false}
-            stateName="Logout"
-            callback={() => {
-              GlobalState.delete("userDetails");
-              GlobalState.delete("userID");
-              GlobalState.delete("userType");
-              props.history.push("/login");
-            }}
-          />
-          <MenuButton
-            icon={faTools}
-            selectedColor="bg-main"
-            stateSync={false}
-            stateName="Logout"
-            callback={() => {
-              props.history.push("/room/" + userDetails.roomID);
-            }}
-          />
-        </div>
-      )
-    },
-    dashboard: (
-      <div className="h-1/3 flex-1">
-        <MenuButton
-          icon={faHome}
-          stateSync={false}
-          stateName="home"
-          callback={() => {
-            props.history.push("/home");
-          }}
-        />
-        <MenuButton
-          icon={faWaveSquare}
-          selectedColor="bg-main"
-          stateName="simulate"
-        />
-        <MenuButton icon={faPhoneAlt} />
-        <MenuButton
-          icon={faMobileAlt}
-          stateName="overlay"
-          stateSync={false}
-          callback={state => {
-            console.log("open");
-            EventHandler.update("overlay", state);
-          }}
-        />
-      </div>
-    )
-  };
-  let userType = GlobalState.get("userType") == "true" ? "physio" : "client";
+  let userType = GlobalState.get("userType") == "true";
+  let logout = (
+    <MenuButton
+      icon={faSignOutAlt}
+      selectedColor="bg-main"
+      stateSync={false}
+      stateName="Logout"
+      callback={() => {
+        GlobalState.delete("userDetails");
+        GlobalState.delete("userID");
+        GlobalState.delete("userType");
+        props.history.push("/login");
+      }}
+    />
+  );
+
+  let dashboard = (
+    <MenuButton
+      icon={faTools}
+      selectedColor="bg-main"
+      stateSync={false}
+      stateName="Dashboard"
+      callback={() => {
+        props.history.push("/room/" + userDetails.roomID);
+      }}
+    />
+  );
+
+  let defaultMenu = (
+    <div className="h-1/3 flex-1">
+      <MenuButton
+        icon={faHome}
+        stateSync={false}
+        stateName="home"
+        callback={() => {
+          props.history.push("/home");
+        }}
+      />
+      <MenuButton
+        icon={faWaveSquare}
+        selectedColor="bg-main"
+        stateName="simulate"
+      />
+
+      <MenuButton
+        icon={faPhoneAlt}
+        selectedColor="bg-main"
+        stateName="videoCall"
+        callback={state => {
+          StateHandler.update("videoCall", state, true);
+        }}
+      />
+      <MenuButton
+        icon={faMobileAlt}
+        stateName="overlay"
+        stateSync={false}
+        callback={state => {
+          EventHandler.update("overlay", state);
+        }}
+      />
+    </div>
+  );
+
   let menu;
   if (props.page === undefined) {
-    menu = opts["dashboard"];
+    menu = defaultMenu;
   } else {
-    menu = opts["home"][userType] || opts["dashboard"];
+    menu = (
+      <div className="h-1/3 flex-1">
+        {userType ? [logout] : [logout, dashboard]}
+      </div>
+    );
   }
+
   return (
     <BaseComponent
       baseClass="sm:flex hidden h-screen w-24 inline-flex flex-wrap bg-menu shadow-lg "

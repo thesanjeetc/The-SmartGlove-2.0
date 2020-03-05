@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { fragshader, vertshader } from "../material.js";
+import { fragshader, vertshader } from "./material.js";
 import { StateHandler } from "../Other/api";
 import Config from "../../ConfigFile";
 
@@ -28,7 +28,16 @@ class HandVis extends Component {
 
     this.camera = new THREE.PerspectiveCamera(70, 2, 1, 1000);
 
-    // Set up raycaster and mouse
+    this.nonVecPosArr = [
+      [0.788, 0.1357],
+      [0.9108, 0.7045],
+      [0.7564, 0.571],
+      [0.7189, 0.8318],
+      [0.6541, 0.7276],
+      [0.4228, 0.9246],
+      [0.4039, 0.8121],
+      [0.434, 0.377]
+    ];
     this.posarr = [];
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -37,13 +46,19 @@ class HandVis extends Component {
     this.isListening = false;
     this.numbers = [];
     this.labels = [];
-    for (let i = 1; i < Config.numSensors + 1; i++) {
+    for (let i = 1; i < 8; i++) {
       this.labels.push(i);
     }
-    // Set up initial random sensor positions
-    for (var i = 0; i < 16; i++) {
-      this.posarr.push(new THREE.Vector2(Math.random(), Math.random()));
+
+    for (var i = 0; i < 8; i++) {
+      let vec = new THREE.Vector2(
+        this.nonVecPosArr[i][0],
+        this.nonVecPosArr[i][1]
+      );
+      this.posarr.push(vec);
+      console.log(vec);
     }
+
     this.clock = new THREE.Clock();
 
     // Load geometry
@@ -143,6 +158,15 @@ class HandVis extends Component {
     }
   }
 
+  resizeDisplay(width, height) {
+    // you must pass false here or three.js sadly fights the Bowser
+    this.renderer.setSize(width, height, false);
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+
+    // update any render target sizes here
+  }
+
   continueLoading() {
     // Set up mesh
     this.mesh.scale.set(10, 10, 10);
@@ -187,7 +211,6 @@ class HandVis extends Component {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.camera.position.set(1.25, 26, 0);
     this.controls.update();
-
     StateHandler.subscribe("sensorData", dataPoints => {
       if (dataPoints !== null) {
         this.setState({
@@ -195,6 +218,8 @@ class HandVis extends Component {
         });
       }
     });
+
+    StateHandler.subscribe("videoCall", () => this.resizeDisplay(407, 394));
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -273,8 +298,6 @@ class HandVis extends Component {
       this.mouse.x = this.state.mouse.x / this.renderer.getSize().x;
       this.mouse.y = this.state.mouse.y / this.renderer.getSize().y;
     } catch {}
-    console.log("Mouse:");
-    console.log(this.mouse);
 
     // Calculate objects intersecting the picking ray
     this.raycaster.setFromCamera(this.mouse, this.camera);
@@ -312,10 +335,6 @@ class HandVis extends Component {
   //   this.el.appendChild( this.renderer.domElement ); // mount using React ref
   // };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.newData != nextState.newData;
-  }
-
   addCustomSceneObjects = () => {
     const geometry = new THREE.BoxGeometry(2, 2, 2);
     const material = new THREE.MeshPhongMaterial({
@@ -344,7 +363,7 @@ class HandVis extends Component {
   startAnimationLoop = () => {
     // this.cube.rotation.x += 0.01;
     // this.cube.rotation.y += 0.01;
-    this.resizeCanvasToDisplaySize();
+    // this.resizeCanvasToDisplaySize();
     this.renderer.render(this.scene, this.camera);
     this.requestID = window.requestAnimationFrame(this.startAnimationLoop);
   };

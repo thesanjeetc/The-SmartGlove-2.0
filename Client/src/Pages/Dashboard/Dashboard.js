@@ -4,6 +4,7 @@ import MenuBar from "../Components/Menu";
 import { StatusContainer } from "./Components/Status";
 import { Recordings } from "./Components/Recording";
 import { QRDialog } from "./Components/QRCode";
+import { VideoContainer } from "./Components/VideoCall";
 import { joinRoom } from "./Other/api";
 import BarChart from "./Graphs/BarChart";
 import LineChart from "./Graphs/LineChart";
@@ -41,7 +42,7 @@ class Dashboard extends React.Component {
   render() {
     if (!this.loggedOut) {
       return (
-        <Container className="w-screen h-screen overflow-hidden">
+        <Container className="w-screen h-screen overflow">
           <MenuBar pageRefresh={() => this.setState({ refresh: true })} />
           <Container className="h-full flex-1 p-3">
             <Container className="sm:w-2/5 md:w-1/5 h-full w-full h-full p-4">
@@ -66,10 +67,13 @@ class Dashboard extends React.Component {
                 </Tile>
               </Container>
             </Container>
-            <Container className="sm:flex hidden h-full lg:w-2/5 w-full p-4">
-              <Tile className="p-4">
-                <HandVis />
-              </Tile>
+            <Container className="sm:flex hidden h-full lg:w-2/5 w-3/5">
+              <Container className="w-full block p-4">
+                <Tile className="p-4">
+                  <HandVis />
+                </Tile>
+              </Container>
+              <VideoContainer roomID={this.props.roomID} />
             </Container>
           </Container>
           <QRDialog roomID={this.props.roomID + "?device=mobile"} />
