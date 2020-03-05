@@ -60,6 +60,7 @@ class HandVis extends Component {
     }
 
     this.clock = new THREE.Clock();
+    // this.axesHelper = new THREE.AxesHelper(5);
 
     // Load geometry
     let loadPromise = new Promise(
@@ -170,6 +171,8 @@ class HandVis extends Component {
   continueLoading() {
     // Set up mesh
     this.mesh.scale.set(10, 10, 10);
+    console.log(this.mesh.rotation);
+    this.mesh.rotateY(1.57079633);
     this.mesh.traverse(o => {
       console.log(o);
       if (typeof o.material !== "undefined") {
@@ -186,6 +189,7 @@ class HandVis extends Component {
     // Add mesh
     console.log(this.mesh);
     this.scene.add(this.mesh);
+    // this.scene.add(this.axesHelper);
   }
 
   animate = () => {
