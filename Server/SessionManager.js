@@ -27,7 +27,7 @@ class Glove {
   }
 
   handleSensorData(data) {
-    this.stateHandler.sensorData = data;
+    this.stateHandler.sensorData = (data - 10) * (10 / 9);
   }
 
   handleDisconnect(data) {

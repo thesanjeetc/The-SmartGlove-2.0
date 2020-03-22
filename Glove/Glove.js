@@ -65,4 +65,4 @@ class Glove {
   }
 }
 
-new Glove("demo", true);
+new Glove("", false);
