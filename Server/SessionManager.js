@@ -27,6 +27,10 @@ class Glove {
   }
 
   handleSensorData(data) {
+    for (let i = 0; i < data.length; i++) {
+      data[i] -= 9;
+      data[i] *= 10 / 9;
+    }
     this.stateHandler.sensorData = data;
   }
 
