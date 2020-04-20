@@ -23,7 +23,7 @@ app.get("*", (req, res) => {
 });
 
 server.listen(process.env.PORT || 80, () => {
-  wakeUpDyno();
+//   wakeUpDyno();
 });
 
 let liveSessions = {};
