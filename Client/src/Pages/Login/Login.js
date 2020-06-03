@@ -16,13 +16,16 @@ class Login extends React.Component {
     if (this.state.loggedIn) {
       let userType = this.state.userType;
       let userID = this.state.userID;
-      fetch("/api/" + userType + "/" + userID, {
-        method: "get",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
+      fetch(
+        "https://thesmartglove.herokuapp.com/api/" + userType + "/" + userID,
+        {
+          method: "get",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           GlobalState.store("userDetails", JSON.stringify(data[0]));

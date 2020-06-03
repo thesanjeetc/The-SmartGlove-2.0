@@ -22,7 +22,7 @@ class Home extends React.Component {
         clientID: userDetails.clientID,
         sessionID: NaN,
         userType: GlobalState.get("userType") == "true",
-        error: false
+        error: false,
       };
 
       this.state.path = this.state.userType
@@ -46,19 +46,19 @@ class Home extends React.Component {
   }
 
   fetchRoom() {
-    fetch(this.links.clientRoom, {
+    fetch("https://thesmartglove.herokuapp.com/api" + this.links.clientRoom, {
       method: "get",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         let roomID = data[0].roomID;
         this.playRecording(roomID);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error: true });
       });
   }
@@ -74,18 +74,18 @@ class Home extends React.Component {
   }
 
   fetchData(path) {
-    fetch(path, {
+    fetch("https://thesmartglove.herokuapp.com/api" + path, {
       method: "get",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         this.setState({ data: data });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error: true });
       });
   }
@@ -101,21 +101,21 @@ class Home extends React.Component {
       //prettier-ignore
       clientSessionRecordings: "/api/client/" + this.state.clientID + "/sessions/" + this.state.sessionID,
       clientRecordings: "/api/client/" + this.state.clientID + "/recordings",
-      clientRoom: "/api/client/" + this.state.clientID + "/room"
+      clientRoom: "/api/client/" + this.state.clientID + "/room",
     };
 
     this.routes = {
       physioClients: [this.links.physioClients],
       physioSessions: [
         this.links.physioSessions,
-        this.links.clientSessionRecordings
+        this.links.clientSessionRecordings,
       ],
       physioRecordings: [this.links.physioRecordings],
       clientSessions: [
         this.links.clientSessions,
-        this.links.clientSessionRecordings
+        this.links.clientSessionRecordings,
       ],
-      clientRecordings: [this.links.clientRecordings]
+      clientRecordings: [this.links.clientRecordings],
     };
   }
 
@@ -152,7 +152,7 @@ class Home extends React.Component {
                   </div>
                   <Search
                     data={this.state.data}
-                    callback={displayData => {
+                    callback={(displayData) => {
                       this.setState({ displayData: displayData });
                     }}
                   />
@@ -192,7 +192,7 @@ class Home extends React.Component {
               <Tile className="p-8 overflow-y-scroll scroller">
                 <Table
                   data={this.state.displayData}
-                  callback={record => this.updatePath(record)}
+                  callback={(record) => this.updatePath(record)}
                 />
               </Tile>
             </Container>
