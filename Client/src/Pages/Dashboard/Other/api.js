@@ -4,7 +4,13 @@ import { EventEmitter, SyncStateHandler } from "./StateHandler";
 
 let dev = false;
 let devIP = "159.65.92.200";
-let address = (dev ? devIP : window.location.hostname) + "/";
+let address;
+
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  address = window.location.hostname + "/";
+} else {
+  address = "https://thesmartglove.herokuapp.com/";
+}
 
 let StateHandler;
 let EventHandler = new EventEmitter();
@@ -12,7 +18,7 @@ let EventHandler = new EventEmitter();
 const joinRoom = (roomID, id) => {
   let socket = io.connect(address + roomID, {
     query: { room: roomID },
-    reconnect: true
+    reconnect: true,
   });
 
   socket.on("connect", () => {

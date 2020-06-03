@@ -8,14 +8,14 @@ import {
   faPhoneAlt,
   faMobileAlt,
   faSignOutAlt,
-  faTools
+  faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
 import { Button, MenuButton } from "../Dashboard/Components/Button";
 import { StateHandler, EventHandler } from "../Dashboard/Other/api";
 import { withRouter } from "react-router-dom";
 
-const MenuBar = props => {
+const MenuBar = (props) => {
   let userDetails = JSON.parse(GlobalState.get("userDetails"));
   let userType = GlobalState.get("userType") == "true";
   let logout = (
@@ -65,7 +65,7 @@ const MenuBar = props => {
         icon={faPhoneAlt}
         selectedColor="bg-main"
         stateName="videoCall"
-        callback={state => {
+        callback={(state) => {
           StateHandler.update("videoCall", state, true);
         }}
       />
@@ -73,7 +73,7 @@ const MenuBar = props => {
         icon={faMobileAlt}
         stateName="overlay"
         stateSync={false}
-        callback={state => {
+        callback={(state) => {
           EventHandler.update("overlay", state);
         }}
       />
@@ -100,6 +100,14 @@ const MenuBar = props => {
     >
       {menu}
       <div className="self-end">
+        <MenuButton
+          icon={faAdjust}
+          onClick={() => {
+            GlobalState.darkmode = !GlobalState.darkmode;
+            localStorage.setItem("darkmode", GlobalState.darkmode.toString());
+            props.pageRefresh();
+          }}
+        />
         <MenuButton
           icon={faAdjust}
           onClick={() => {
