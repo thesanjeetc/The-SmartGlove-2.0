@@ -9,6 +9,7 @@ import {
   faMobileAlt,
   faSignOutAlt,
   faTools,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import GlobalState from "../Globals";
 import { Button, MenuButton } from "../Dashboard/Components/Button";
@@ -100,6 +101,13 @@ const MenuBar = (props) => {
     >
       {menu}
       <div className="self-end">
+        <MenuButton
+          icon={faInfoCircle}
+          onClick={() => {
+            window.location.href =
+              "https://www.notion.so/The-SmartGlove-2-0-fd428006309940508e8c4206438f4dc7";
+          }}
+        />
         <MenuButton
           icon={faAdjust}
           onClick={() => {
