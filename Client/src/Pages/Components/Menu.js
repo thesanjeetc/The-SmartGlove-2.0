@@ -108,14 +108,6 @@ const MenuBar = (props) => {
             props.pageRefresh();
           }}
         />
-        <MenuButton
-          icon={faAdjust}
-          onClick={() => {
-            GlobalState.darkmode = !GlobalState.darkmode;
-            localStorage.setItem("darkmode", GlobalState.darkmode.toString());
-            props.pageRefresh();
-          }}
-        />
       </div>
     </BaseComponent>
   );
