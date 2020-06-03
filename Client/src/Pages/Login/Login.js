@@ -20,15 +20,15 @@ class Login extends React.Component {
         method: "get",
         headers: {
           Accept: "application/json",
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
           GlobalState.store("userDetails", JSON.stringify(data[0]));
           this.props.history.push("/home");
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({ incorrectLogin: true });
         });
     }
@@ -40,19 +40,19 @@ class Login extends React.Component {
 
   login(event) {
     event.preventDefault();
-    fetch("/api/auth", {
+    fetch("https://thesmartglove.herokuapp.com/api/auth", {
       method: "post",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         username: this.username.value,
-        password: this.password.value
-      })
+        password: this.password.value,
+      }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         GlobalState.store("userID", data[0].userID);
         GlobalState.store("userType", data[0].UserType);
         let userID = data[0].userID;
@@ -60,12 +60,12 @@ class Login extends React.Component {
         this.setState({
           loggedIn: true,
           userID: userID,
-          userType: userType
+          userType: userType,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
-          incorrectLogin: true
+          incorrectLogin: true,
         });
       });
   }
@@ -89,7 +89,7 @@ class Login extends React.Component {
                           ? "p-4 w-full rounded-lg -my-1 bg-dark-menu border border-red-600"
                           : "p-4 w-full rounded-lg -my-1 bg-dark-menu"
                       }
-                      ref={username => (this.username = username)}
+                      ref={(username) => (this.username = username)}
                     ></input>
                   </div>
                   <div className="my-6">
@@ -102,14 +102,14 @@ class Login extends React.Component {
                           ? "p-4 w-full rounded-lg -my-1 bg-dark-menu border border-red-600"
                           : "p-4 w-full rounded-lg -my-1 bg-dark-menu"
                       }
-                      ref={password => (this.password = password)}
+                      ref={(password) => (this.password = password)}
                       type="password"
                     ></input>
                   </div>
                   <div className="w-full flex my-10">
                     <button
                       className="controlButton px-24 bg-dark-main rounded-lg py-4 text-xl font-bold m-auto"
-                      onClick={event => this.login(event)}
+                      onClick={(event) => this.login(event)}
                     >
                       Login
                     </button>
@@ -117,7 +117,7 @@ class Login extends React.Component {
                   <div className="w-full flex text-sm -my-4">
                     <p
                       className="m-auto linkHover cursor-pointer"
-                      onClick={event => {
+                      onClick={(event) => {
                         this.username.value = "demo";
                         this.password.value = "demo";
                         this.login(event);

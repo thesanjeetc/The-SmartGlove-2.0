@@ -9,10 +9,18 @@ var express = require("express");
 var { wakeUpDyno } = require("./Server/Utils");
 
 app.use(express.static(path.join(__dirname, "Client/build")));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://smartglove.sanjeet.co"); // update to match the domain you will make the request from
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 app.use(
   bodyParser.urlencoded({
-    extended: false
+    extended: false,
   })
 );
 app.use(bodyParser.json());
@@ -23,13 +31,13 @@ app.get("*", (req, res) => {
 });
 
 server.listen(process.env.PORT || 80, () => {
-//   wakeUpDyno();
+  //   wakeUpDyno();
 });
 
 let liveSessions = {};
 let demoSession = new SessionManager(io, "7cd34a");
 
-io.on("connection", client => {
+io.on("connection", (client) => {
   let roomID = client.handshake.query["room"];
   if (liveSessions[roomID] === undefined && roomID !== "") {
     let sessionSocket = io.of("/" + roomID);
