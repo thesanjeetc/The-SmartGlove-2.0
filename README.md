@@ -1,20 +1,10 @@
 # The SmartGlove 2.0
 
-![Dashboard](https://cdn.discordapp.com/attachments/575028784395452464/693409140629831741/unknown.png)
+The SmartGlove is a prototype pressure sensing glove aimed at helping physiotherapists treat hand related injuries. This repo holds the code for web app, providing an interface to interact with the glove. For more details, visit our [landing page]( https://thesmartglove.landen.co/). See it in action below (opens in a new tab).
 
-## What is it?
-The SmartGlove is a prototype pressure sensing glove aimed at helping physiotherapists treat hand related injuries. This repo holds the code for web app, providing an interface to interact with the glove. For more details, visit our [landing page]( https://thesmartglove.landen.co/) for information, or https://thesmartglove.herokuapp.com/demo to try the demo. By joining the same room, multiple clients will be in sync in real-time.
+<a href="https://www.youtube.com/watch?v=Rm8KcMCyixM"  target="_blank"><img src="https://github.com/user-attachments/assets/4e3290b9-1913-4b5f-bcf8-8cd0fc6a87bf" width="600" ></a>
 
+## The SmartGlove UI
+Features include real-time data visualisation, multi-client sync and responsive design.
 
-### [Try it out](https://thesmartglove.herokuapp.com/demo) or [see it in action.](https://www.youtube.com/watch?v=WGSrL6JS5Os)
-
-## Running it Locally
-1) Clone the repo.
-2) Run npm install
-3) Run cd client && npm install
-4) Start the express server and React server separately.
-5) Visit http://localhost:3000/demo
-
-## Glove Simulation
-1) Go to https://thesmartglove.herokuapp.com/room/ + {custom room ID}
-2) Connect to the sever, with this repl: https://repl.it/@thesanjeetc/thesmartglove, substituting with your custom room ID.
+<img src="https://github.com/user-attachments/assets/b8bc4dc8-5cf6-4e12-80e0-017bbdb6bb66" width="600" >
